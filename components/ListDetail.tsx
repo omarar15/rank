@@ -6,8 +6,8 @@ import { doc, collection, onSnapshot } from 'firebase/firestore'
 import { db } from '@/lib/firebase'
 import { useAuth } from './AuthProvider'
 import { AddItemForm } from './AddItemForm'
-import { deleteItem } from '@/lib/firestore'
-import { Copy, Check, ArrowLeft, ArrowUpDown, Trash2 } from 'lucide-react'
+import { deleteItem, setRankedItems } from '@/lib/firestore'
+import { Copy, Check, ArrowLeft, ArrowUpDown, Trash2, GripVertical } from 'lucide-react'
 import { ListDoc, ItemDoc } from '@/lib/types'
 
 interface ItemEntry {
@@ -27,6 +27,12 @@ export function ListDetail({ listId }: Props) {
   const [itemsLoading, setItemsLoading] = useState(true)
   const [copied, setCopied] = useState(false)
   const copyTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const [dragIndex, setDragIndex] = useState<number | null>(null)
+  const [dragY, setDragY] = useState(0)
+  const [dragging, setDragging] = useState(false)
+  const dragStartYRef = useRef(0)
+  const dragItemTopRef = useRef(0)
+  const listRef = useRef<HTMLOListElement>(null)
 
   useEffect(() => {
     const unsub = onSnapshot(doc(db, 'lists', listId), (snap) => {
@@ -76,6 +82,59 @@ export function ListDetail({ listId }: Props) {
   const unrankedItems = items.filter((i) => !rankedIds.includes(i.id))
 
   const shareUrl = typeof window !== 'undefined' ? window.location.href : ''
+
+  function getItemHeight(): number {
+    if (!listRef.current) return 0
+    const first = listRef.current.children[0] as HTMLElement | undefined
+    if (!first) return 0
+    return first.offsetHeight + 8 // gap-2
+  }
+
+  function getOverIndex(draggedIdx: number, currentDragY: number): number {
+    const h = getItemHeight()
+    if (h === 0) return draggedIdx
+    const offset = Math.round(currentDragY / h)
+    const target = draggedIdx + offset
+    return Math.max(0, Math.min(rankedItems.length - 1, target))
+  }
+
+  function handleGripDown(e: React.PointerEvent, i: number) {
+    e.preventDefault()
+    const el = (e.target as HTMLElement).closest('li') as HTMLElement
+    if (!el) return
+    el.setPointerCapture(e.pointerId)
+    dragStartYRef.current = e.clientY
+    dragItemTopRef.current = el.getBoundingClientRect().top
+    setDragIndex(i)
+    setDragY(0)
+    setDragging(true)
+  }
+
+  function handlePointerMove(e: React.PointerEvent) {
+    if (dragIndex === null) return
+    const dy = e.clientY - dragStartYRef.current
+    setDragY(dy)
+  }
+
+  function handlePointerUp() {
+    if (dragIndex === null || !listData) {
+      setDragIndex(null)
+      setDragY(0)
+      setDragging(false)
+      return
+    }
+    const target = getOverIndex(dragIndex, dragY)
+    if (target !== dragIndex) {
+      const newRanked = [...listData.rankedItems]
+      const [moved] = newRanked.splice(dragIndex, 1)
+      newRanked.splice(target, 0, moved)
+      setListData({ ...listData, rankedItems: newRanked })
+      setRankedItems(listId, newRanked)
+    }
+    setDragging(false)
+    setDragIndex(null)
+    setDragY(0)
+  }
 
   function handleCopy() {
     navigator.clipboard.writeText(shareUrl)
@@ -130,38 +189,70 @@ export function ListDetail({ listId }: Props) {
         <AddItemForm listId={listId} existingNames={items.map((i) => i.data.name)} />
       </div>
 
-      {rankedItems.length > 0 && (
-        <section className="mb-8">
-          <h2 className="mb-3 text-xs font-semibold uppercase tracking-wider text-stone-400">Ranked</h2>
-          <ol className="flex flex-col gap-2">
-            {rankedItems.map((item, i) => (
-              <li key={item.id} className="flex items-center gap-3 rounded-2xl border border-stone-100 bg-white px-4 py-3 shadow-sm">
-                <span className="w-6 text-right text-sm font-bold text-stone-300">{i + 1}</span>
-                <span className="flex-1 text-sm font-medium">{item.data.name}</span>
-                <Link
-                  href={`/lists/${listId}/rank/${item.id}`}
-                  className="rounded-lg p-2 text-stone-400 pointer-hover:hover:bg-stone-100 pointer-hover:hover:text-stone-600"
-                >
-                  <ArrowUpDown className="h-3.5 w-3.5" />
-                </Link>
-                <button
-                  onClick={() => handleDelete(item.id)}
-                  className="rounded-lg p-2 text-stone-400 pointer-hover:hover:bg-red-50 pointer-hover:hover:text-red-500"
-                >
-                  <Trash2 className="h-3.5 w-3.5" />
-                </button>
-              </li>
-            ))}
-          </ol>
-        </section>
-      )}
+      {rankedItems.length > 0 && (() => {
+        const target = dragIndex !== null ? getOverIndex(dragIndex, dragY) : null
+        const h = getItemHeight()
+
+        function getTranslateY(i: number): number {
+          if (dragIndex === null || target === null) return 0
+          if (i === dragIndex) return dragY
+          if (dragIndex < target && i > dragIndex && i <= target) return -h
+          if (dragIndex > target && i < dragIndex && i >= target) return h
+          return 0
+        }
+
+        return (
+          <section className="mb-8">
+            <ol ref={listRef} className="flex flex-col gap-2">
+              {rankedItems.map((item, i) => {
+                const ty = getTranslateY(i)
+                const isDragged = dragIndex === i
+
+                return (
+                  <li
+                    key={item.id}
+                    onPointerMove={isDragged ? handlePointerMove : undefined}
+                    onPointerUp={isDragged ? handlePointerUp : undefined}
+                    style={{
+                      transform: `translateY(${ty}px)`,
+                      zIndex: isDragged ? 50 : 0,
+                    }}
+                    className={`flex items-center gap-3 rounded-2xl border bg-white px-4 py-3 shadow-sm ${
+                      isDragged
+                        ? 'scale-[1.02] border-stone-300 shadow-md'
+                        : `border-stone-100${dragging ? ' transition-transform duration-200' : ''}`
+                    }`}
+                  >
+                    <span
+                      className="touch-none cursor-grab text-stone-300 select-none active:cursor-grabbing"
+                      onPointerDown={(e) => handleGripDown(e, i)}
+                    >
+                      <GripVertical className="h-4 w-4" />
+                    </span>
+                    <span className="w-6 text-right text-sm font-bold text-stone-300">{i + 1}</span>
+                    <span className="flex-1 text-sm font-medium">{item.data.name}</span>
+                    <button
+                      onClick={() => handleDelete(item.id)}
+                      className="rounded-lg p-2 text-stone-400 pointer-hover:hover:bg-red-50 pointer-hover:hover:text-red-500"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </button>
+                  </li>
+                )
+              })}
+            </ol>
+          </section>
+        )
+      })()}
 
       {unrankedItems.length > 0 && (
         <section>
-          <h2 className="mb-3 text-xs font-semibold uppercase tracking-wider text-stone-400">Unranked</h2>
+          <h2 className="mb-3 text-xs font-semibold tracking-wider text-stone-400">Unranked</h2>
           <ul className="flex flex-col gap-2">
             {unrankedItems.map((item) => (
               <li key={item.id} className="flex items-center gap-3 rounded-2xl border border-stone-100 bg-white px-4 py-3 shadow-sm">
+                <span className="invisible"><GripVertical className="h-4 w-4" /></span>
+                <span className="w-6" />
                 <span className="flex-1 text-sm font-medium">{item.data.name}</span>
                 <Link
                   href={`/lists/${listId}/rank/${item.id}`}
