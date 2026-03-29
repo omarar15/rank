@@ -254,7 +254,7 @@ export function ListDetail({ listId }: Props) {
           <ArrowLeft className="h-4 w-4" />
         </Link>
         <h1 className="flex-1 text-xl font-semibold tracking-tight">{listData.title}</h1>
-        <div className="flex flex-row-reverse items-center gap-1 sm:flex-row">
+        <div className="flex flex-row-reverse items-center gap-1 pr-1.5 sm:flex-row sm:pr-0">
           <div className="relative" ref={menuRef}>
             <button
               onClick={() => { trigger('light'); setShowMenu(!showMenu) }}
@@ -426,7 +426,7 @@ export function ListDetail({ listId }: Props) {
                       transform: `translateY(${ty}px)`,
                       zIndex: isDragged ? 50 : openMenuItemId === item.id ? 10 : 0,
                     }}
-                    className={`flex items-start gap-3 ring-1 ring-black/5 rounded-2xl bg-white px-4 py-3 shadow-sm ${
+                    className={`flex items-start gap-3 ring-1 ring-black/5 rounded-2xl bg-white pl-4 pr-2 py-3 sm:pr-4 shadow-sm ${
                       isDragged
                         ? 'shadow-md scale-102'
                         : `${dragging ? ' transition-transform duration-200' : ''}`
@@ -453,7 +453,7 @@ export function ListDetail({ listId }: Props) {
                         onClick={() => { trigger('light'); setOpenMenuItemId(openMenuItemId === item.id ? null : item.id) }}
                         className="rounded-lg p-2 text-stone-400 pointer-hover:hover:bg-black/5 pointer-hover:hover:text-stone-600"
                       >
-                        <Ellipsis className="h-3.5 w-3.5" />
+                        <Ellipsis className="h-4 w-4" />
                       </button>
                       {openMenuItemId === item.id && (
                         <div className="absolute right-0 top-full z-50 mt-1 w-32 rounded-xl bg-white shadow-lg ring-1 ring-black/10 py-1.5 flex flex-col">
@@ -487,7 +487,7 @@ export function ListDetail({ listId }: Props) {
           <h2 className="mb-3 text-sm font-semibold text-center text-black/40">Unranked</h2>
           <ul className="flex flex-col gap-2">
             {unrankedItems.map((item) => (
-              <li key={item.id} className="flex items-start gap-3 rounded-2xl border border-stone-100 bg-white px-4 py-3 shadow-sm">
+              <li key={item.id} className="flex items-start gap-3 rounded-2xl border border-stone-100 bg-white pl-4 pr-2 py-3 sm:pr-4 shadow-sm">
                 <div className="flex w-[calc(20px+24px+12px)] items-center">
                   {rankedIds.length === 0 ? (
                     <button
@@ -519,7 +519,7 @@ export function ListDetail({ listId }: Props) {
                     onClick={() => { trigger('light'); setOpenMenuItemId(openMenuItemId === item.id ? null : item.id) }}
                     className="rounded-lg p-2 text-stone-400 pointer-hover:hover:bg-black/5 pointer-hover:hover:text-stone-600"
                   >
-                    <EllipsisVertical className="h-3.5 w-3.5" />
+                    <EllipsisVertical className="h-4 w-4" />
                   </button>
                   {openMenuItemId === item.id && (
                     <div className="absolute right-0 top-full z-50 mt-1 w-32 rounded-xl bg-white shadow-lg ring-1 ring-black/10 py-1.5 flex flex-col">
