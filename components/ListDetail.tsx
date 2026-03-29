@@ -71,12 +71,6 @@ export function ListDetail({ listId }: Props) {
     return unsub
   }, [listId])
 
-  useEffect(() => {
-    const color = (listData?.color as ListColor) || 'white'
-    document.documentElement.style.backgroundColor = COLOR_GRADIENT[color]
-    return () => { document.documentElement.style.backgroundColor = '' }
-  }, [listData?.color])
-
 
   useEffect(() => {
     const unsub = onSnapshot(collection(db, 'lists', listId, 'items'), (snap) => {
