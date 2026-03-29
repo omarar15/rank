@@ -20,7 +20,10 @@ export default function Home() {
   return (
     <main className="flex min-h-dvh items-center justify-center p-6">
       <div className="w-full max-w-sm">
-        <h1 className="mb-8 text-2xl font-semibold tracking-tight">rank</h1>
+        <div className="mb-8 text-center">
+          <h1 className="text-5xl font-bold tracking-tight">rank</h1>
+          <p className="mt-2 text-stone-400">rank anything, instantly</p>
+        </div>
         <PhoneAuthForm />
       </div>
     </main>
