@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { ConfirmationResult } from 'firebase/auth'
 import { createUserDoc } from '@/lib/firestore'
 
@@ -14,29 +14,39 @@ export function OtpForm({ phone, confirmation, onBack }: Props) {
   const [otp, setOtp] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const submittingRef = useRef(false)
 
   function formatOtp(digits: string): string {
     if (digits.length <= 3) return digits
     return `${digits.slice(0, 3)} ${digits.slice(3, 6)}`
   }
 
-  function handleOtpChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const digits = e.target.value.replace(/\D/g, '').slice(0, 6)
-    setOtp(digits)
-  }
-
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault()
+  async function submitCode(code: string) {
+    if (submittingRef.current) return
+    submittingRef.current = true
     setError('')
     setLoading(true)
     try {
-      const result = await confirmation.confirm(otp.trim())
+      const result = await confirmation.confirm(code)
       await createUserDoc(result.user.uid, phone)
-      // AuthProvider will detect the state change and downstream redirect takes over
     } catch {
       setError('Invalid code. Please try again.')
       setLoading(false)
+      submittingRef.current = false
     }
+  }
+
+  function handleOtpChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const digits = e.target.value.replace(/\D/g, '').slice(0, 6)
+    setOtp(digits)
+    if (digits.length === 6) {
+      submitCode(digits)
+    }
+  }
+
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault()
+    if (otp.length === 6) submitCode(otp)
   }
 
   return (
