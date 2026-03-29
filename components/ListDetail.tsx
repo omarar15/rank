@@ -351,7 +351,7 @@ export function ListDetail({ listId }: Props) {
 
       {unrankedItems.length > 0 && (
         <section>
-          <h2 className="mb-3 text-sm font-semibold text-center text-stone-400">Unranked</h2>
+          <h2 className="mb-3 text-sm font-semibold text-center text-black/40">Unranked</h2>
           <ul className="flex flex-col gap-2">
             {unrankedItems.map((item) => (
               <li key={item.id} className="flex items-center gap-3 rounded-2xl border border-stone-100 bg-white px-4 py-3 shadow-sm">
