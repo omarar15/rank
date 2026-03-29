@@ -217,20 +217,20 @@ export function ListDetail({ listId }: Props) {
                       transform: `translateY(${ty}px)`,
                       zIndex: isDragged ? 50 : 0,
                     }}
-                    className={`flex items-center gap-3 rounded-2xl border bg-white px-4 py-3 shadow-sm ${
+                    className={`flex items-center gap-3 rounded-2xl bg-white px-4 py-3 shadow-sm ${
                       isDragged
-                        ? 'scale-[1.02] border-stone-300 shadow-md'
-                        : `border-stone-100${dragging ? ' transition-transform duration-200' : ''}`
+                        ? 'scale-[1.02] border border-transparent ring-1 ring-stone-300 shadow-md'
+                        : `border border-stone-100${dragging ? ' transition-transform duration-200' : ''}`
                     }`}
                   >
                     <span
-                      className="touch-none cursor-grab text-stone-300 select-none active:cursor-grabbing"
+                      className="-my-3 -ml-4 flex items-center self-stretch touch-none cursor-grab py-3 pl-4 pr-1 text-stone-300 select-none active:cursor-grabbing"
                       onPointerDown={(e) => handleGripDown(e, i)}
                     >
                       <GripVertical className="h-4 w-4" />
                     </span>
-                    <span className="w-6 text-right text-sm font-bold text-stone-300">{i + 1}</span>
-                    <span className="flex-1 text-sm font-medium">{item.data.name}</span>
+                    <span className="w-6 text-right text-base font-medium text-stone-400">{i + 1}</span>
+                    <span className="flex-1 text-base font-medium">{item.data.name}</span>
                     <button
                       onClick={() => handleDelete(item.id)}
                       className="rounded-lg p-2 text-stone-400 pointer-hover:hover:bg-red-50 pointer-hover:hover:text-red-500"
@@ -251,15 +251,15 @@ export function ListDetail({ listId }: Props) {
           <ul className="flex flex-col gap-2">
             {unrankedItems.map((item) => (
               <li key={item.id} className="flex items-center gap-3 rounded-2xl border border-stone-100 bg-white px-4 py-3 shadow-sm">
-                <div className="flex w-[calc(16px+24px+12px)] items-center">
+                <div className="flex w-[calc(20px+24px+12px)] items-center">
                   <Link
                     href={`/lists/${listId}/rank/${item.id}`}
                     className="rounded-lg px-2 py-[3px] text-stone-400 pointer-hover:hover:bg-stone-100 pointer-hover:hover:text-stone-600"
                   >
-                    <span className="text-sm font-medium">Rank</span>
+                    <span className="text-base font-medium">Rank</span>
                   </Link>
                 </div>
-                <span className="flex-1 text-sm font-medium">{item.data.name}</span>
+                <span className="flex-1 text-base font-medium">{item.data.name}</span>
                 <button
                   onClick={() => handleDelete(item.id)}
                   className="rounded-lg p-2 text-stone-400 pointer-hover:hover:bg-red-50 pointer-hover:hover:text-red-500"
