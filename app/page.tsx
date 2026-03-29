@@ -1,21 +1,12 @@
-'use client'
-
-import { useEffect } from 'react'
-import { useRouter } from 'next/navigation'
-import { useAuth } from '@/components/AuthProvider'
+import { cookies } from 'next/headers'
+import { redirect } from 'next/navigation'
 import { PhoneAuthForm } from '@/components/PhoneAuthForm'
 
-export default function Home() {
-  const { user, loading } = useAuth()
-  const router = useRouter()
-
-  useEffect(() => {
-    if (!loading && user) {
-      router.replace('/lists')
-    }
-  }, [user, loading, router])
-
-  if (loading || user) return null
+export default async function Home() {
+  const cookieStore = await cookies()
+  if (cookieStore.get('auth-session')) {
+    redirect('/lists')
+  }
 
   return (
     <main className="flex min-h-dvh items-center justify-center p-6">

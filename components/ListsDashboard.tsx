@@ -8,6 +8,7 @@ import { signOut } from 'firebase/auth'
 import { db, auth } from '@/lib/firebase'
 import { useAuth } from './AuthProvider'
 import { createList } from '@/lib/firestore'
+import { clearSession } from '@/app/actions/session'
 import { LogOut, Plus } from 'lucide-react'
 import { ListDoc, ListColor, ItemDoc } from '@/lib/types'
 import { ColorPicker } from './ColorPicker'
@@ -129,7 +130,7 @@ export function ListsDashboard() {
     <main className="mx-auto flex min-h-dvh w-full max-w-md flex-col px-4 py-8">
       <div className="mb-6 flex items-center gap-3">
         <button
-          onClick={() => { trigger('light'); signOut(auth).then(() => router.push('/')) }}
+          onClick={() => { trigger('light'); signOut(auth).then(() => clearSession()).then(() => router.push('/')) }}
           className="rounded-lg p-2.5 text-stone-400 pointer-hover:hover:bg-stone-100 pointer-hover:hover:text-stone-600"
         >
           <LogOut className="h-4 w-4 -scale-x-100" />

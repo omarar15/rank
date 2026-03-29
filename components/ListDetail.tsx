@@ -155,7 +155,7 @@ export function ListDetail({ listId }: Props) {
     .filter((i): i is ItemEntry => i !== undefined)
   const unrankedItems = items.filter((i) => !rankedIds.includes(i.id))
 
-  const shareUrl = typeof window !== 'undefined' ? window.location.href : ''
+  const shareUrl = listData ? `${window.location.origin}/share/${listData.shareToken}` : ''
 
   function getItemHeight(): number {
     if (!listRef.current) return 0

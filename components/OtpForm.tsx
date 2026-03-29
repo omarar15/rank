@@ -1,8 +1,10 @@
 'use client'
 
 import { useRef, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { ConfirmationResult } from 'firebase/auth'
 import { createUserDoc } from '@/lib/firestore'
+import { createSession } from '@/app/actions/session'
 import { useWebHaptics } from 'web-haptics/react'
 
 interface Props {
@@ -17,6 +19,7 @@ export function OtpForm({ phone, confirmation, onBack }: Props) {
   const [loading, setLoading] = useState(false)
   const submittingRef = useRef(false)
   const { trigger } = useWebHaptics()
+  const router = useRouter()
 
   function formatOtp(digits: string): string {
     if (digits.length <= 3) return digits
@@ -31,6 +34,8 @@ export function OtpForm({ phone, confirmation, onBack }: Props) {
     try {
       const result = await confirmation.confirm(code)
       await createUserDoc(result.user.uid, phone)
+      await createSession()
+      router.push('/lists')
     } catch {
       setError('Invalid code. Please try again.')
       setLoading(false)

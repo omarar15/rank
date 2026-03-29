@@ -1,16 +1,12 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { useRouter } from 'next/navigation'
 import { RecaptchaVerifier, signInWithPhoneNumber, ConfirmationResult } from 'firebase/auth'
 import { auth } from '@/lib/firebase'
-import { useAuth } from './AuthProvider'
 import { OtpForm } from './OtpForm'
 import { useWebHaptics } from 'web-haptics/react'
 
 export function PhoneAuthForm() {
-  const { user, loading } = useAuth()
-  const router = useRouter()
   const { trigger } = useWebHaptics()
 
   const [phone, setPhone] = useState('')  // raw digits only
@@ -29,12 +25,6 @@ export function PhoneAuthForm() {
   const [error, setError] = useState('')
   const [sending, setSending] = useState(false)
   const recaptchaRef = useRef<RecaptchaVerifier | null>(null)
-
-  useEffect(() => {
-    if (!loading && user) {
-      router.push('/lists')
-    }
-  }, [user, loading, router])
 
   useEffect(() => {
     recaptchaRef.current = new RecaptchaVerifier(auth, 'recaptcha-container', { size: 'invisible' })
@@ -59,8 +49,6 @@ export function PhoneAuthForm() {
       setSending(false)
     }
   }
-
-  if (loading) return null
 
   if (confirmation) {
     return (
