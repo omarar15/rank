@@ -6,10 +6,12 @@ import { RecaptchaVerifier, signInWithPhoneNumber, ConfirmationResult } from 'fi
 import { auth } from '@/lib/firebase'
 import { useAuth } from './AuthProvider'
 import { OtpForm } from './OtpForm'
+import { useWebHaptics } from 'web-haptics/react'
 
 export function PhoneAuthForm() {
   const { user, loading } = useAuth()
   const router = useRouter()
+  const { trigger } = useWebHaptics()
 
   const [phone, setPhone] = useState('')  // raw digits only
 
@@ -98,6 +100,7 @@ export function PhoneAuthForm() {
         <button
           type="submit"
           disabled={sending}
+          onClick={() => trigger('light')}
           className="rounded-xl bg-stone-900 px-4 py-3 font-medium text-white disabled:opacity-40"
         >
           {sending ? 'Sending…' : 'Send code'}

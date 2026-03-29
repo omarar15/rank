@@ -3,6 +3,7 @@
 import { useRef, useState } from 'react'
 import { ConfirmationResult } from 'firebase/auth'
 import { createUserDoc } from '@/lib/firestore'
+import { useWebHaptics } from 'web-haptics/react'
 
 interface Props {
   phone: string
@@ -15,6 +16,7 @@ export function OtpForm({ phone, confirmation, onBack }: Props) {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const submittingRef = useRef(false)
+  const { trigger } = useWebHaptics()
 
   function formatOtp(digits: string): string {
     if (digits.length <= 3) return digits
@@ -70,11 +72,12 @@ export function OtpForm({ phone, confirmation, onBack }: Props) {
       <button
         type="submit"
         disabled={loading || otp.length !== 6}
+        onClick={() => trigger('light')}
         className="rounded-xl bg-stone-900 px-4 py-3 font-medium text-white disabled:opacity-40"
       >
         {loading ? 'Verifying…' : 'Verify code'}
       </button>
-      <button type="button" onClick={onBack} className="text-sm text-stone-400 underline">
+      <button type="button" onClick={() => { trigger('light'); onBack() }} className="text-sm text-stone-400 underline">
         Use a different number
       </button>
     </form>

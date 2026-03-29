@@ -251,7 +251,7 @@ export function RankingFlow({ listId, itemId }: Props) {
         </div>
 
         <button
-          onClick={() => { setLastAction('skip'); dispatch({ type: 'SKIP' }) }}
+          onClick={() => { trigger('light'); setLastAction('skip'); dispatch({ type: 'SKIP' }) }}
           className="mt-4 w-full py-2 text-base text-stone-400 underline"
         >
           Can't decide
