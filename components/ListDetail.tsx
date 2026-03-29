@@ -323,7 +323,7 @@ export function ListDetail({ listId }: Props) {
               value={editingItem.description}
               onChange={(e) => setEditingItem({ ...editingItem, description: e.target.value })}
               rows={2}
-              className="w-full resize-none rounded-xl border border-stone-200 px-4 py-2.5 text-sm text-stone-600 outline-none focus:border-stone-400"
+              className="w-full resize-none rounded-xl border border-stone-200 px-4 py-2.5 text-base text-stone-600 outline-none focus:border-stone-400"
             />
             <div className="flex gap-2">
               <button

@@ -59,7 +59,7 @@ export function AddItemForm({ listId, existingNames, color = 'white', onAdd, aut
         value={description}
         onChange={(e) => setDescription(e.target.value)}
         rows={2}
-        className="w-full resize-none rounded-xl border border-stone-200 px-4 py-2.5 text-sm text-stone-600 outline-none focus:border-stone-400"
+        className="w-full resize-none rounded-xl border border-stone-200 px-4 py-2.5 text-base text-stone-600 outline-none focus:border-stone-400"
       />
       {isDuplicate && (
         <p className="text-xs text-red-400">Already in this list.</p>
