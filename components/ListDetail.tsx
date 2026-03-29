@@ -375,7 +375,7 @@ export function ListDetail({ listId }: Props) {
                       transform: `translateY(${ty}px)`,
                       zIndex: isDragged ? 50 : 0,
                     }}
-                    className={`flex items-center gap-3 ring-1 ring-black/5 rounded-2xl bg-white px-4 py-3 shadow-sm ${
+                    className={`flex items-start gap-3 ring-1 ring-black/5 rounded-2xl bg-white px-4 py-3 shadow-sm ${
                       isDragged
                         ? 'shadow-md scale-102'
                         : `${dragging ? ' transition-transform duration-200' : ''}`
@@ -391,7 +391,7 @@ export function ListDetail({ listId }: Props) {
                     <span className="flex-1 min-w-0">
                       <span className="block text-base font-medium">{item.data.name}</span>
                       {item.data.description && (
-                        <span className="block text-xs text-stone-400 mt-0.5 truncate">{item.data.description}</span>
+                        <span className="block text-xs text-stone-400 mt-0.5 whitespace-pre-wrap break-words">{item.data.description}</span>
                       )}
                     </span>
                     <div className="relative" ref={openMenuItemId === item.id ? itemMenuRef : undefined}>
@@ -433,7 +433,7 @@ export function ListDetail({ listId }: Props) {
           <h2 className="mb-3 text-sm font-semibold text-center text-black/40">Unranked</h2>
           <ul className="flex flex-col gap-2">
             {unrankedItems.map((item) => (
-              <li key={item.id} className="flex items-center gap-3 rounded-2xl border border-stone-100 bg-white px-4 py-3 shadow-sm">
+              <li key={item.id} className="flex items-start gap-3 rounded-2xl border border-stone-100 bg-white px-4 py-3 shadow-sm">
                 <div className="flex w-[calc(20px+24px+12px)] items-center">
                   <Link
                     href={`/lists/${listId}/rank/${item.id}`}
