@@ -190,7 +190,7 @@ export function ListsDashboard() {
           ))}
         </div>
       ) : lists.length === 0 ? (
-        <div className="flex flex-1 flex-col items-center justify-center text-black/40">
+        <div className="flex flex-1 sm:max-h-64 flex-col items-center justify-center text-black/40">
           <p className="text-sm font-medium">No lists yet</p>
           <p className="mt-1 text-xs">Tap the + button to create one</p>
         </div>
