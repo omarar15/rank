@@ -143,11 +143,11 @@ export function RankingFlow({ listId, itemId }: Props) {
   }, [state.phase]) // eslint-disable-line react-hooks/exhaustive-deps
 
   if (loading || state.phase === 'loading') {
-    return <div className="flex min-h-dvh items-center justify-center text-zinc-400">Loading…</div>
+    return <div className="flex min-h-dvh items-center justify-center text-stone-400">Loading…</div>
   }
 
   if (state.phase === 'error') {
-    return <div className="flex min-h-dvh items-center justify-center text-zinc-400">Something went wrong.</div>
+    return <div className="flex min-h-dvh items-center justify-center text-stone-400">Something went wrong.</div>
   }
 
 const { lo, hi, pivotIndex, rankedItems, itemNames, itemBeingRankedName } = state
@@ -158,23 +158,23 @@ const { lo, hi, pivotIndex, rankedItems, itemNames, itemBeingRankedName } = stat
   return (
     <main className="flex min-h-dvh flex-col items-center justify-center px-6">
       <div className="w-full max-w-sm">
-        <p className="mb-6 text-center text-xs text-zinc-400">
+        <p className="mb-6 text-center text-xs text-stone-400">
           Which do you prefer? ({done + 1} of ~{totalComparisons})
         </p>
 
         <div className="flex gap-3">
           <button
             onClick={() => dispatch({ type: 'CHOOSE_BETTER' })}
-            className="flex flex-1 flex-col items-center justify-center rounded-2xl border-2 border-zinc-200 bg-white px-4 py-8 text-center font-semibold text-zinc-900 active:bg-zinc-50"
+            className="flex flex-1 flex-col items-center justify-center rounded-2xl border-2 border-stone-200 bg-white px-4 py-8 text-center font-semibold text-stone-900 active:bg-stone-50"
           >
             {itemBeingRankedName}
           </button>
 
-          <div className="flex items-center text-sm font-medium text-zinc-400">vs</div>
+          <div className="flex items-center text-sm font-medium text-stone-400">vs</div>
 
           <button
             onClick={() => dispatch({ type: 'CHOOSE_WORSE' })}
-            className="flex flex-1 flex-col items-center justify-center rounded-2xl border-2 border-zinc-200 bg-white px-4 py-8 text-center font-semibold text-zinc-900 active:bg-zinc-50"
+            className="flex flex-1 flex-col items-center justify-center rounded-2xl border-2 border-stone-200 bg-white px-4 py-8 text-center font-semibold text-stone-900 active:bg-stone-50"
           >
             {pivotName}
           </button>
@@ -182,7 +182,7 @@ const { lo, hi, pivotIndex, rankedItems, itemNames, itemBeingRankedName } = stat
 
         <button
           onClick={() => dispatch({ type: 'SKIP' })}
-          className="mt-4 w-full py-2 text-sm text-zinc-400 underline"
+          className="mt-4 w-full py-2 text-sm text-stone-400 underline"
         >
           Can't decide
         </button>

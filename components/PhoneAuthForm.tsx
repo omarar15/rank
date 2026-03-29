@@ -62,15 +62,15 @@ export function PhoneAuthForm() {
   return (
     <>
       <form onSubmit={handleSend} className="flex flex-col gap-4">
-        <label className="text-sm font-medium text-zinc-700">Phone number</label>
-        <div className="flex items-center rounded-xl border border-zinc-200 px-4 py-3 focus-within:border-zinc-400">
-          <span className="mr-1 text-zinc-400">+1</span>
+        <label className="text-sm font-medium text-stone-700">Phone number</label>
+        <div className="flex items-center rounded-xl border border-stone-200 px-4 py-3 focus-within:border-stone-400">
+          <span className="mr-1 text-stone-400">+1</span>
           <input
             type="tel"
             placeholder="555 555 5555"
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
-            className="flex-1 outline-none placeholder:text-zinc-300"
+            className="flex-1 outline-none placeholder:text-stone-300"
             autoFocus
             required
           />
@@ -79,7 +79,7 @@ export function PhoneAuthForm() {
         <button
           type="submit"
           disabled={sending}
-          className="rounded-xl bg-zinc-900 px-4 py-3 font-medium text-white disabled:opacity-40"
+          className="rounded-xl bg-stone-900 px-4 py-3 font-medium text-white disabled:opacity-40"
         >
           {sending ? 'Sending…' : 'Send code'}
         </button>

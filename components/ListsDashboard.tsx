@@ -45,13 +45,13 @@ export function ListsDashboard() {
     return (
       <main className="mx-auto min-h-dvh w-full max-w-md px-4 py-8">
         <div className="mb-8 flex items-center justify-between">
-          <div className="h-7 w-24 animate-pulse rounded-lg bg-zinc-100" />
-          <div className="h-4 w-16 animate-pulse rounded bg-zinc-100" />
+          <div className="h-7 w-24 animate-pulse rounded-lg bg-stone-100" />
+          <div className="h-4 w-16 animate-pulse rounded bg-stone-100" />
         </div>
-        <div className="mb-6 h-10 animate-pulse rounded-xl bg-zinc-100" />
+        <div className="mb-6 h-10 animate-pulse rounded-xl bg-stone-100" />
         <div className="flex flex-col gap-3">
           {[0, 1, 2].map((i) => (
-            <div key={i} className="h-14 animate-pulse rounded-2xl bg-zinc-100" />
+            <div key={i} className="h-14 animate-pulse rounded-2xl bg-stone-100" />
           ))}
         </div>
       </main>
@@ -64,7 +64,7 @@ export function ListsDashboard() {
         <h1 className="text-xl font-semibold tracking-tight">My lists</h1>
         <button
           onClick={() => signOut(auth).then(() => router.push('/auth'))}
-          className="text-sm text-zinc-400 underline"
+          className="text-sm text-stone-400 underline"
         >
           Sign out
         </button>
@@ -77,21 +77,21 @@ export function ListsDashboard() {
       {listsLoading ? (
         <div className="flex flex-col gap-3">
           {[0, 1, 2].map((i) => (
-            <div key={i} className="h-14 animate-pulse rounded-2xl bg-zinc-100" />
+            <div key={i} className="h-14 animate-pulse rounded-2xl bg-stone-100" />
           ))}
         </div>
       ) : lists.length === 0 ? (
-        <p className="text-center text-sm text-zinc-400">No lists yet. Create one above.</p>
+        <p className="text-center text-sm text-stone-400">No lists yet. Create one above.</p>
       ) : (
         <ul className="flex flex-col gap-3">
           {lists.map(({ id, data }) => (
             <li key={id}>
               <Link
                 href={`/lists/${id}`}
-                className="flex items-center justify-between rounded-2xl border border-zinc-100 bg-white px-4 py-4 shadow-sm active:bg-zinc-50"
+                className="flex items-center justify-between rounded-2xl border border-stone-100 bg-white px-4 py-4 shadow-sm active:bg-stone-50"
               >
                 <span className="font-medium">{data.title}</span>
-                <span className="text-sm text-zinc-400">
+                <span className="text-sm text-stone-400">
                   {data.rankedItems.length} ranked
                 </span>
               </Link>

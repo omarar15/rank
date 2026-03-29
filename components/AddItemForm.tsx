@@ -33,7 +33,7 @@ export function AddItemForm({ listId, existingNames }: Props) {
         value={name}
         onChange={(e) => setName(e.target.value)}
         onKeyDown={(e) => e.key === 'Enter' && handleAdd(true)}
-        className="w-full rounded-xl border border-zinc-200 px-4 py-2.5 text-sm outline-none focus:border-zinc-400"
+        className="w-full rounded-xl border border-stone-200 px-4 py-2.5 text-sm outline-none focus:border-stone-400"
       />
       {isDuplicate && (
         <p className="text-xs text-red-400">Already in this list.</p>
@@ -42,14 +42,14 @@ export function AddItemForm({ listId, existingNames }: Props) {
         <button
           onClick={() => handleAdd(false)}
           disabled={empty || isDuplicate}
-          className="flex-1 rounded-xl border border-zinc-200 px-4 py-2.5 text-sm font-medium text-zinc-700 disabled:opacity-40"
+          className="flex-1 rounded-xl border border-stone-200 px-4 py-2.5 text-sm font-medium text-stone-700 disabled:opacity-40"
         >
           Add unranked
         </button>
         <button
           onClick={() => handleAdd(true)}
           disabled={empty || isDuplicate}
-          className="flex-1 rounded-xl bg-zinc-900 px-4 py-2.5 text-sm font-medium text-white disabled:opacity-40"
+          className="flex-1 rounded-xl bg-stone-900 px-4 py-2.5 text-sm font-medium text-white disabled:opacity-40"
         >
           Add &amp; rank
         </button>

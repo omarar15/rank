@@ -22,12 +22,12 @@ export default function Home() {
   return (
     <main className="flex min-h-dvh flex-col items-center justify-center px-6 text-center">
       <h1 className="mb-3 text-4xl font-bold tracking-tight">rank</h1>
-      <p className="mb-8 max-w-xs text-zinc-500">
+      <p className="mb-8 max-w-xs text-stone-500">
         Create ranked lists using a simple comparison flow.
       </p>
       <Link
         href="/auth"
-        className="rounded-2xl bg-zinc-900 px-8 py-3 font-semibold text-white"
+        className="rounded-2xl bg-stone-900 px-8 py-3 font-semibold text-white"
       >
         Get started
       </Link>
