@@ -3,15 +3,26 @@
 import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/components/AuthProvider'
+import { PhoneAuthForm } from '@/components/PhoneAuthForm'
 
 export default function Home() {
   const { user, loading } = useAuth()
   const router = useRouter()
 
   useEffect(() => {
-    if (loading) return
-    router.replace(user ? '/lists' : '/auth')
+    if (!loading && user) {
+      router.replace('/lists')
+    }
   }, [user, loading, router])
 
-  return null
+  if (loading || user) return null
+
+  return (
+    <main className="flex min-h-dvh items-center justify-center p-6">
+      <div className="w-full max-w-sm">
+        <h1 className="mb-8 text-2xl font-semibold tracking-tight">rank</h1>
+        <PhoneAuthForm />
+      </div>
+    </main>
+  )
 }

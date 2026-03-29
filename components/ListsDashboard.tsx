@@ -78,7 +78,7 @@ export function ListsDashboard() {
 
   useEffect(() => {
     if (!loading && !user) {
-      router.push('/auth')
+      router.push('/')
     }
   }, [user, loading, router])
 
@@ -117,7 +117,7 @@ export function ListsDashboard() {
     <main className="mx-auto flex min-h-dvh w-full max-w-md flex-col px-4 py-8">
       <div className="mb-6 flex items-center gap-3">
         <button
-          onClick={() => signOut(auth).then(() => router.push('/auth'))}
+          onClick={() => signOut(auth).then(() => router.push('/'))}
           className="rounded-lg p-2.5 text-stone-400 pointer-hover:hover:bg-stone-100 pointer-hover:hover:text-stone-600"
         >
           <LogOut className="h-4 w-4 -scale-x-100" />

@@ -205,7 +205,7 @@ export function ListDetail({ listId }: Props) {
       <main className="mx-auto min-h-dvh w-full max-w-md px-4 py-8">
         <div className="mb-8 flex items-center gap-3">
           <h1 className="flex-1 text-xl font-semibold tracking-tight">{listData.title}</h1>
-          <Link href="/auth" className="text-sm text-stone-400 underline">Sign in</Link>
+          <Link href="/" className="text-sm text-stone-400 underline">Sign in</Link>
         </div>
 
         {itemsLoading ? (
