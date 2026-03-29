@@ -12,6 +12,17 @@ import { Link2, Check, ArrowLeft, Trash2, GripVertical, Plus, EllipsisVertical }
 import { ListDoc, ItemDoc, ListColor } from '@/lib/types'
 import { ColorPicker } from './ColorPicker'
 
+const COLOR_BG: Record<ListColor, string> = {
+  red: 'bg-red-500',
+  orange: 'bg-orange-500',
+  yellow: 'bg-yellow-500',
+  green: 'bg-green-500',
+  sky: 'bg-sky-500',
+  violet: 'bg-violet-500',
+  pink: 'bg-pink-500',
+  white: 'bg-black',
+}
+
 const COLOR_GRADIENT: Record<ListColor, string> = {
   red: 'rgba(239,68,68,0.3)',
   orange: 'rgba(249,115,22,0.3)',
@@ -255,7 +266,7 @@ export function ListDetail({ listId }: Props) {
         </div>
         <button
           onClick={() => setShowAdd(true)}
-          className="rounded-full bg-black/5 p-2.5 text-black/50 pointer-hover:hover:bg-black/10 pointer-hover:hover:text-black/70"
+          className={`rounded-full p-2.5 text-white ${COLOR_BG[(listData.color as ListColor) || 'white']}`}
         >
           <Plus className="h-4 w-4" />
         </button>
