@@ -267,7 +267,7 @@ export function ListDetail({ listId }: Props) {
               <EllipsisVertical className="h-4 w-4 rotate-90" />
             </button>
             {showMenu && (
-              <div className="absolute right-0 top-full z-50 mt-1 w-34 rounded-xl bg-white shadow-lg ring-1 ring-black/10 px-3 py-2 gap-1.5 flex flex-col">
+              <div className="absolute right-0 top-full z-50 mt-1 w-48 rounded-xl bg-white shadow-lg ring-1 ring-black/10 px-3 py-2 gap-1.5 flex flex-col">
                 <div className="pb-2 pt-1">
                   <p className="mb-2 text-xs font-medium text-black/40">Color</p>
                   <ColorPicker
