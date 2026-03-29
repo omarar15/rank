@@ -20,5 +20,6 @@ export interface ListDoc {
 
 export interface ItemDoc {
   name: string
+  description?: string
   createdAt: Timestamp
 }

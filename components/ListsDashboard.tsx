@@ -99,14 +99,23 @@ export function ListsDashboard() {
   if (loading || !user) {
     return (
       <main className="mx-auto min-h-dvh w-full max-w-md px-4 py-8">
-        <div className="mb-8 flex items-center justify-between">
-          <div className="h-7 w-24 animate-pulse rounded-lg bg-black/5" />
-          <div className="h-4 w-16 animate-pulse rounded bg-black/5" />
+        <div className="mb-6 flex items-center gap-3">
+          <div className="h-9 w-9 animate-pulse rounded-lg bg-black/5" />
+          <div className="h-6 flex-1 animate-pulse rounded-lg bg-black/5" />
+          <div className="h-9 w-9 animate-pulse rounded-lg bg-black/5" />
         </div>
-        <div className="mb-6 h-10 animate-pulse rounded-xl bg-black/5" />
         <div className="flex flex-col gap-3">
           {[0, 1, 2].map((i) => (
-            <div key={i} className="h-14 animate-pulse rounded-2xl bg-black/5" />
+            <div key={i} className="flex animate-pulse overflow-hidden rounded-2xl bg-white p-4 shadow-md ring ring-black/5">
+              <div className="flex-[3]">
+                <div className="mb-3 h-5 w-2/3 rounded-md bg-black/10" />
+              </div>
+              <div className="flex flex-[2] flex-col gap-1.5" style={{ minHeight: 108 }}>
+                <div className="h-4 rounded bg-black/10" />
+                <div className="h-4 w-5/6 rounded bg-black/10" />
+                <div className="h-4 w-2/3 rounded bg-black/10" />
+              </div>
+            </div>
           ))}
         </div>
       </main>
@@ -186,7 +195,16 @@ export function ListsDashboard() {
       {listsLoading ? (
         <div className="flex flex-col gap-3">
           {[0, 1, 2].map((i) => (
-            <div key={i} className="h-14 animate-pulse rounded-2xl bg-black/5" />
+            <div key={i} className="flex animate-pulse overflow-hidden rounded-2xl bg-white p-4 shadow-md ring ring-black/5">
+              <div className="flex-[3]">
+                <div className="mb-3 h-5 w-2/3 rounded-md bg-black/10" />
+              </div>
+              <div className="flex flex-[2] flex-col gap-1.5" style={{ minHeight: 108 }}>
+                <div className="h-4 rounded bg-black/10" />
+                <div className="h-4 w-5/6 rounded bg-black/10" />
+                <div className="h-4 w-2/3 rounded bg-black/10" />
+              </div>
+            </div>
           ))}
         </div>
       ) : lists.length === 0 ? (
