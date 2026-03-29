@@ -129,7 +129,7 @@ export function ListsDashboard() {
             setShowCreate(true)
             setTimeout(() => inputRef.current?.focus(), 0)
           }}
-          className="rounded-full bg-black p-2.5 text-white"
+          className="rounded-full bg-stone-800 p-2.5 text-white"
         >
           <Plus className="h-4 w-4" />
         </button>

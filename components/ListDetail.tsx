@@ -20,7 +20,7 @@ const COLOR_BG: Record<ListColor, string> = {
   sky: 'bg-sky-500',
   violet: 'bg-violet-500',
   pink: 'bg-pink-500',
-  white: 'bg-black',
+  white: 'bg-stone-800',
 }
 
 const COLOR_GRADIENT: Record<ListColor, string> = {
