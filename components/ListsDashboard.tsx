@@ -115,7 +115,7 @@ export function ListsDashboard() {
   }
 
   return (
-    <main className="mx-auto min-h-dvh w-full max-w-md px-4 py-8">
+    <main className="mx-auto flex min-h-dvh w-full max-w-md flex-col px-4 py-8">
       <div className="mb-6 flex items-center gap-3">
         <button
           onClick={() => signOut(auth).then(() => router.push('/auth'))}
@@ -193,7 +193,10 @@ export function ListsDashboard() {
           ))}
         </div>
       ) : lists.length === 0 ? (
-        <p className="text-center text-sm text-stone-400">No lists yet. Tap + to create one.</p>
+        <div className="flex flex-1 max-h-64 flex-col items-center justify-center text-black/40">
+          <p className="text-sm font-medium">No lists yet</p>
+          <p className="mt-1 text-xs">Tap the + button to create one</p>
+        </div>
       ) : (
         <ul className="flex flex-col gap-3">
           {lists.map(({ id, data }) => (
