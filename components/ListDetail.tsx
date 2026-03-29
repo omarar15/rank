@@ -72,6 +72,13 @@ export function ListDetail({ listId }: Props) {
   }, [listId])
 
   useEffect(() => {
+    const color = (listData?.color as ListColor) || 'white'
+    const gradient = `linear-gradient(to bottom right, ${COLOR_GRADIENT[color]}, transparent)`
+    document.documentElement.style.background = gradient
+    return () => { document.documentElement.style.background = '' }
+  }, [listData?.color])
+
+  useEffect(() => {
     const unsub = onSnapshot(collection(db, 'lists', listId, 'items'), (snap) => {
       setItems(snap.docs.map((d) => ({ id: d.id, data: d.data() as ItemDoc })))
       setItemsLoading(false)
