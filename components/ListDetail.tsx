@@ -7,7 +7,7 @@ import { doc, collection, onSnapshot } from 'firebase/firestore'
 import { db } from '@/lib/firebase'
 import { useAuth } from './AuthProvider'
 import { AddItemForm } from './AddItemForm'
-import { deleteItem, deleteList, setRankedItems, updateItem, updateListColor } from '@/lib/firestore'
+import { deleteItem, deleteList, setRankedItems, updateItem, updateListColor, updateListTitle } from '@/lib/firestore'
 import { Link2, Check, ArrowLeft, Trash2, GripVertical, Plus, EllipsisVertical, Ellipsis, Pencil } from 'lucide-react'
 import { ListDoc, ItemDoc, ListColor } from '@/lib/types'
 import { ColorPicker } from './ColorPicker'
@@ -75,6 +75,7 @@ export function ListDetail({ listId }: Props) {
   const [openMenuItemId, setOpenMenuItemId] = useState<string | null>(null)
   const [editingItem, setEditingItem] = useState<{ id: string; name: string; description: string } | null>(null)
   const itemMenuRef = useRef<HTMLDivElement>(null)
+  const [editingListName, setEditingListName] = useState<string | null>(null)
 
   useEffect(() => {
     const unsub = onSnapshot(doc(db, 'lists', listId), (snap) => {
@@ -271,6 +272,16 @@ export function ListDetail({ listId }: Props) {
                     }}
                   />
                 </div>
+                <button
+                  onClick={() => {
+                    setEditingListName(listData.title)
+                    setShowMenu(false)
+                  }}
+                  className="flex w-full items-center gap-2 px-2 py-2 rounded-md text-sm text-stone-700 pointer-hover:hover:bg-stone-50"
+                >
+                  <Pencil className="h-3.5 w-3.5" />
+                  Edit name
+                </button>
                 <div className="border-t border-black/5" />
                 <button
                   onClick={() => {
@@ -303,6 +314,39 @@ export function ListDetail({ listId }: Props) {
         <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/40 px-4 pt-32" onClick={() => setShowAdd(false)}>
           <div onClick={(e) => e.stopPropagation()} className="w-full max-w-sm rounded-2xl bg-white p-4 shadow-lg">
             <AddItemForm listId={listId} existingNames={items.map((i) => i.data.name)} color={(listData.color as ListColor) || 'white'} onAdd={() => setShowAdd(false)} autoFocus />
+          </div>
+        </div>
+      )}
+
+      {editingListName !== null && (
+        <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/40 px-4 pt-32" onClick={() => setEditingListName(null)}>
+          <div onClick={(e) => e.stopPropagation()} className="w-full max-w-sm rounded-2xl bg-white p-4 shadow-lg flex flex-col gap-3">
+            <h2 className="text-sm font-semibold text-stone-700">Edit list name</h2>
+            <input
+              type="text"
+              value={editingListName}
+              onChange={(e) => setEditingListName(e.target.value)}
+              autoFocus
+              className="w-full rounded-xl border border-stone-200 px-4 py-2.5 text-base outline-none focus:border-stone-400"
+            />
+            <div className="flex gap-2">
+              <button
+                onClick={() => setEditingListName(null)}
+                className="flex-1 rounded-xl border border-stone-200 px-4 py-2.5 text-sm font-medium text-stone-700"
+              >
+                Cancel
+              </button>
+              <button
+                disabled={!editingListName.trim()}
+                onClick={() => {
+                  updateListTitle(listId, editingListName.trim())
+                  setEditingListName(null)
+                }}
+                className={`flex-1 rounded-xl px-4 py-2.5 text-sm font-medium text-white disabled:opacity-40 ${COLOR_BG[(listData.color as ListColor) || 'white']}`}
+              >
+                Save
+              </button>
+            </div>
           </div>
         </div>
       )}
