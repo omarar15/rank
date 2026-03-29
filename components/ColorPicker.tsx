@@ -24,7 +24,7 @@ interface Props {
 export function ColorPicker({ value, onChange, columns = 4 }: Props) {
   const { trigger } = useWebHaptics()
   return (
-    <div className={`grid w-fit gap-2 ${columns === 8 ? 'grid-cols-8' : 'grid-cols-4'}`}>
+    <div className={`grid w-fit gap-3 sm:gap-2 ${columns === 8 ? 'grid-cols-8' : 'grid-cols-4'}`}>
       {LIST_COLORS.map((c) => (
         <button
           key={c}
