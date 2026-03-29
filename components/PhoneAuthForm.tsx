@@ -73,7 +73,6 @@ export function PhoneAuthForm() {
   return (
     <>
       <form onSubmit={handleSend} className="flex flex-col gap-4">
-        <label className="text-sm font-medium text-stone-700">Log in or sign up</label>
         <div className="flex items-center rounded-xl border border-stone-200 px-4 py-3 focus-within:border-stone-400">
           <span className="mr-1 text-stone-400">+1</span>
           <input
