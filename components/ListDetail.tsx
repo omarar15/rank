@@ -272,6 +272,7 @@ export function ListDetail({ listId }: Props) {
                     }}
                   />
                 </div>
+                <div className="border-t border-black/5" />
                 <button
                   onClick={() => {
                     setEditingListName(listData.title)
