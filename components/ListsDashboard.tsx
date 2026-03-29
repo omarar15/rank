@@ -133,6 +133,7 @@ export function ListsDashboard() {
         >
           <Plus className="h-4 w-4" />
         </button>
+        <div className="w-9 sm:hidden" />
       </div>
 
       {showCreate && (
