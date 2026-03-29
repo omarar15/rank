@@ -144,8 +144,9 @@ export function RankingFlow({ listId, itemId }: Props) {
     if (state.phase !== 'done') return
     const { rankedItems, lo } = state
     const newRankedItems = [...rankedItems.slice(0, lo), itemId, ...rankedItems.slice(lo)]
-    setRankedItems(listId, newRankedItems)
-    router.push(`/lists/${listId}`)
+    setRankedItems(listId, newRankedItems).then(() => {
+      router.push(`/lists/${listId}`)
+    })
   }, [state.phase]) // eslint-disable-line react-hooks/exhaustive-deps
 
   if (loading || state.phase === 'loading') {

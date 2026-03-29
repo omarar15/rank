@@ -241,8 +241,8 @@ export function ListDetail({ listId }: Props) {
     )
   }
 
-  function handleDelete(itemId: string) {
-    deleteItem(listId, itemId)
+  async function handleDelete(itemId: string) {
+    await deleteItem(listId, itemId)
   }
 
   return (

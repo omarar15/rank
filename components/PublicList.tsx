@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { collection, query, where, limit, getDocs, onSnapshot } from 'firebase/firestore'
+import { collection, query, where, limit, getDocs, onSnapshot, doc } from 'firebase/firestore'
 import { db } from '@/lib/firebase'
 import { ListDoc, ItemDoc } from '@/lib/types'
 
@@ -22,6 +22,19 @@ export function PublicList({ shareToken }: Props) {
 
   useEffect(() => {
     let unsubList: (() => void) | null = null
+    let unsubItems: (() => void) | null = null
+    let currentListData: ListDoc | null = null
+    let currentNameMap: Record<string, string> = {}
+
+    function resolve() {
+      if (!currentListData) return
+      const resolved = currentListData.rankedItems
+        .map((id) => ({ id, name: currentNameMap[id] ?? id }))
+        .filter((i) => i.name)
+      setTitle(currentListData.title)
+      setRankedItems(resolved)
+      setLoading(false)
+    }
 
     async function findList() {
       const q = query(
@@ -36,37 +49,33 @@ export function PublicList({ shareToken }: Props) {
         return
       }
 
-      const listDoc = snap.docs[0]
-      const listId = listDoc.id
+      const listId = snap.docs[0].id
 
-      // Subscribe to real-time updates on the list doc
-      unsubList = onSnapshot(listDoc.ref, async (listSnap) => {
+      unsubList = onSnapshot(doc(db, 'lists', listId), (listSnap) => {
         if (!listSnap.exists()) {
           setNotFound(true)
           setLoading(false)
           return
         }
-        const data = listSnap.data() as ListDoc
-        setTitle(data.title)
+        currentListData = listSnap.data() as ListDoc
+        resolve()
+      })
 
-        // Resolve item names
-        const itemsSnap = await getDocs(collection(db, 'lists', listId, 'items'))
+      unsubItems = onSnapshot(collection(db, 'lists', listId, 'items'), (itemsSnap) => {
         const nameMap: Record<string, string> = {}
         itemsSnap.docs.forEach((d) => {
           nameMap[d.id] = (d.data() as ItemDoc).name
         })
-
-        const resolved = data.rankedItems
-          .map((id) => ({ id, name: nameMap[id] ?? id }))
-          .filter((i) => i.name)
-
-        setRankedItems(resolved)
-        setLoading(false)
+        currentNameMap = nameMap
+        resolve()
       })
     }
 
     findList()
-    return () => { unsubList?.() }
+    return () => {
+      unsubList?.()
+      unsubItems?.()
+    }
   }, [shareToken])
 
   if (loading) {

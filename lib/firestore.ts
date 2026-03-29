@@ -6,6 +6,7 @@ import {
   setDoc,
   serverTimestamp,
   arrayRemove,
+  writeBatch,
 } from 'firebase/firestore'
 import { db } from './firebase'
 export function generateToken(): string {
@@ -59,11 +60,13 @@ export async function updateItem(listId: string, itemId: string, name: string, d
 }
 
 export async function deleteItem(listId: string, itemId: string) {
-  await deleteDoc(doc(db, 'lists', listId, 'items', itemId))
-  await updateDoc(doc(db, 'lists', listId), {
+  const batch = writeBatch(db)
+  batch.delete(doc(db, 'lists', listId, 'items', itemId))
+  batch.update(doc(db, 'lists', listId), {
     rankedItems: arrayRemove(itemId),
     updatedAt: serverTimestamp(),
   })
+  await batch.commit()
 }
 
 export async function setRankedItems(listId: string, rankedItems: string[]) {
