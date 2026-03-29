@@ -30,9 +30,9 @@ export function ColorPicker({ value, onChange, columns = 4 }: Props) {
           key={c}
           type="button"
           onClick={() => { trigger('light'); onChange(c) }}
-          className={`flex h-5 w-5 items-center justify-center rounded-full border-2 ${c === 'white' ? 'border-black/15' : 'border-white/50'} ${COLOR_CLASS[c]}`}
+          className={`flex h-8 w-8 sm:h-5 sm:w-5 items-center justify-center rounded-full border-2 ${c === 'white' ? 'border-black/15' : 'border-white/50'} ${COLOR_CLASS[c]}`}
         >
-          {value === c && <Check className={`h-3 w-3 ${c === 'white' ? 'text-black/40' : 'text-white'}`} />}
+          {value === c && <Check className={`h-4 w-4 sm:h-3 sm:w-3 ${c === 'white' ? 'text-black/40' : 'text-white'}`} />}
         </button>
       ))}
     </div>
