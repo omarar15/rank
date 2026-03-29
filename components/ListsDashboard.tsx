@@ -77,7 +77,7 @@ export function ListsDashboard() {
             setShowCreate(true)
             setTimeout(() => inputRef.current?.focus(), 0)
           }}
-          className="rounded-lg bg-stone-900 p-2.5 text-white pointer-hover:hover:bg-stone-800"
+          className="rounded-lg bg-stone-200 p-2.5 text-stone-500 pointer-hover:hover:bg-stone-300 pointer-hover:hover:text-stone-700"
         >
           <Plus className="h-4 w-4" />
         </button>
