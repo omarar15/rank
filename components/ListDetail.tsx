@@ -2,13 +2,26 @@
 
 import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { doc, collection, onSnapshot } from 'firebase/firestore'
 import { db } from '@/lib/firebase'
 import { useAuth } from './AuthProvider'
 import { AddItemForm } from './AddItemForm'
-import { deleteItem, setRankedItems } from '@/lib/firestore'
-import { Link2, Check, ArrowLeft, Trash2, GripVertical, Plus } from 'lucide-react'
-import { ListDoc, ItemDoc } from '@/lib/types'
+import { deleteItem, deleteList, setRankedItems, updateListColor } from '@/lib/firestore'
+import { Link2, Check, ArrowLeft, Trash2, GripVertical, Plus, EllipsisVertical } from 'lucide-react'
+import { ListDoc, ItemDoc, ListColor } from '@/lib/types'
+import { ColorPicker } from './ColorPicker'
+
+const COLOR_GRADIENT: Record<ListColor, string> = {
+  red: 'rgba(239,68,68,0.3)',
+  orange: 'rgba(249,115,22,0.3)',
+  yellow: 'rgba(234,179,8,0.3)',
+  green: 'rgba(34,197,94,0.3)',
+  sky: 'rgba(14,165,233,0.3)',
+  violet: 'rgba(139,92,246,0.3)',
+  pink: 'rgba(236,72,153,0.3)',
+  white: 'rgba(0,0,0,0)',
+}
 
 interface ItemEntry {
   id: string
@@ -21,6 +34,7 @@ interface Props {
 
 export function ListDetail({ listId }: Props) {
   const { user, loading } = useAuth()
+  const router = useRouter()
   const [listData, setListData] = useState<ListDoc | null>(null)
   const [items, setItems] = useState<ItemEntry[]>([])
   const [listLoading, setListLoading] = useState(true)
@@ -28,6 +42,8 @@ export function ListDetail({ listId }: Props) {
   const [copied, setCopied] = useState(false)
   const copyTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const [showAdd, setShowAdd] = useState(false)
+  const [showMenu, setShowMenu] = useState(false)
+  const menuRef = useRef<HTMLDivElement>(null)
   const [dragIndex, setDragIndex] = useState<number | null>(null)
   const [dragY, setDragY] = useState(0)
   const [dragging, setDragging] = useState(false)
@@ -51,6 +67,17 @@ export function ListDetail({ listId }: Props) {
     })
     return unsub
   }, [listId])
+
+  useEffect(() => {
+    if (!showMenu) return
+    function onClickOutside(e: MouseEvent) {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setShowMenu(false)
+      }
+    }
+    document.addEventListener('pointerdown', onClickOutside)
+    return () => document.removeEventListener('pointerdown', onClickOutside)
+  }, [showMenu])
 
   if (loading || listLoading) {
     return (
@@ -159,7 +186,7 @@ export function ListDetail({ listId }: Props) {
         ) : (
           <ol className="flex flex-col gap-2">
             {rankedItems.map((item, i) => (
-              <li key={item.id} className="flex items-center gap-3 rounded-2xl border border-stone-100 bg-white px-4 py-3 shadow-sm">
+              <li key={item.id} className="flex items-center gap-3 rounded-2xl bg-white px-4 py-3 shadow-sm">
                 <span className="w-6 text-right text-sm font-bold text-stone-300">{i + 1}</span>
                 <span className="flex-1 text-sm font-medium">{item.data.name}</span>
               </li>
@@ -175,18 +202,60 @@ export function ListDetail({ listId }: Props) {
   }
 
   return (
+    <>
+    <div
+      className="fixed inset-0 -z-10"
+      style={{ backgroundImage: `linear-gradient(to bottom right, ${COLOR_GRADIENT[(listData.color as ListColor) || 'white']}, transparent)` }}
+    />
     <main className="mx-auto flex min-h-dvh w-full max-w-md flex-col px-4 py-8">
-      <div className="mb-6 flex items-center gap-3">
-        <Link href="/lists" className="rounded-lg p-2.5 text-stone-400 pointer-hover:hover:bg-stone-100 pointer-hover:hover:text-stone-600">
+      <div className="mb-6 flex items-center gap-2">
+        <Link href="/lists" className="rounded-lg p-2.5 text-black/40 pointer-hover:hover:bg-black/5 pointer-hover:hover:text-black/70">
           <ArrowLeft className="h-4 w-4" />
         </Link>
         <h1 className="flex-1 text-xl font-semibold tracking-tight">{listData.title}</h1>
-        <button onClick={handleCopy} className="rounded-lg p-2.5 text-stone-400 pointer-hover:hover:bg-stone-100 pointer-hover:hover:text-stone-600">
-          {copied ? <Check className="h-4 w-4 text-green-700" /> : <Link2 className="h-4 w-4" />}
-        </button>
+        <div className="flex items-center gap-1">
+          <div className="relative" ref={menuRef}>
+            <button
+              onClick={() => setShowMenu(!showMenu)}
+              className="rounded-lg p-2.5 text-black/40 pointer-hover:hover:bg-black/5 pointer-hover:hover:text-black/70"
+            >
+              <EllipsisVertical className="h-4 w-4 rotate-90" />
+            </button>
+            {showMenu && (
+              <div className="absolute right-0 top-full z-50 mt-1 w-34 rounded-xl bg-white shadow-lg ring-1 ring-black/10 px-3 py-2 gap-1.5 flex flex-col">
+                <div className="pb-2 pt-1">
+                  <p className="mb-2 text-xs font-medium text-black/40">Color</p>
+                  <ColorPicker
+                    value={(listData.color as ListColor) || 'white'}
+                    onChange={(color) => {
+                      updateListColor(listId, color)
+                      setShowMenu(false)
+                    }}
+                  />
+                </div>
+                <div className="border-t border-black/5" />
+                <button
+                  onClick={() => {
+                    if (confirm('Delete this list?')) {
+                      deleteList(listId)
+                      router.push('/lists')
+                    }
+                  }}
+                  className="flex w-full items-center gap-2 px-2 py-2 rounded-md text-sm text-red-700 pointer-hover:hover:bg-red-50"
+                >
+                  <Trash2 className="h-3.5 w-3.5" />
+                  Delete list
+                </button>
+              </div>
+            )}
+          </div>
+          <button onClick={handleCopy} className="rounded-lg p-2.5 text-black/40 pointer-hover:hover:bg-black/5 pointer-hover:hover:text-black/70">
+            {copied ? <Check className="h-4 w-4 text-green-700" /> : <Link2 className="h-4 w-4" />}
+          </button>
+        </div>
         <button
           onClick={() => setShowAdd(true)}
-          className="rounded-lg bg-stone-200/60 p-2.5 text-stone-500 pointer-hover:hover:bg-stone-200 pointer-hover:hover:text-stone-700"
+          className="rounded-lg bg-black/5 p-2.5 text-black/50 pointer-hover:hover:bg-black/10 pointer-hover:hover:text-black/70"
         >
           <Plus className="h-4 w-4" />
         </button>
@@ -228,10 +297,10 @@ export function ListDetail({ listId }: Props) {
                       transform: `translateY(${ty}px)`,
                       zIndex: isDragged ? 50 : 0,
                     }}
-                    className={`flex items-center gap-3 rounded-2xl bg-white px-4 py-3 shadow-sm ${
+                    className={`flex items-center gap-3 ring-1 ring-black/5 rounded-2xl bg-white px-4 py-3 shadow-sm ${
                       isDragged
-                        ? 'scale-[1.02] border border-transparent ring-1 ring-stone-300 shadow-md'
-                        : `border border-stone-100${dragging ? ' transition-transform duration-200' : ''}`
+                        ? 'shadow-md scale-102'
+                        : `${dragging ? ' transition-transform duration-200' : ''}`
                     }`}
                   >
                     <span
@@ -265,7 +334,7 @@ export function ListDetail({ listId }: Props) {
                 <div className="flex w-[calc(20px+24px+12px)] items-center">
                   <Link
                     href={`/lists/${listId}/rank/${item.id}`}
-                    className="rounded-lg px-2 py-[3px] text-stone-400 pointer-hover:hover:bg-stone-100 pointer-hover:hover:text-stone-600"
+                    className="rounded-lg px-2 py-[3px] text-black/40 pointer-hover:hover:bg-black/5 pointer-hover:hover:text-black/70"
                   >
                     <span className="text-base font-medium">Rank</span>
                   </Link>
@@ -290,11 +359,12 @@ export function ListDetail({ listId }: Props) {
           ))}
         </div>
       ) : rankedItems.length === 0 && unrankedItems.length === 0 ? (
-        <div className="flex flex-1 max-h-64 flex-col items-center justify-center text-stone-400">
+        <div className="flex flex-1 max-h-64 flex-col items-center justify-center text-black/40">
           <p className="text-sm font-medium">No items yet</p>
           <p className="mt-1 text-xs">Tap the + button to add your first item</p>
         </div>
       ) : null}
     </main>
+    </>
   )
 }

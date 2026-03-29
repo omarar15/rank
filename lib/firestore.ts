@@ -16,17 +16,25 @@ export async function createUserDoc(uid: string, phone: string) {
   await setDoc(doc(db, 'users', uid), { phone, createdAt: serverTimestamp() }, { merge: true })
 }
 
-export function createList(ownerId: string, title: string): string {
+export function createList(ownerId: string, title: string, color: string = 'white'): string {
   const ref = doc(collection(db, 'lists'))
   setDoc(ref, {
     ownerId,
     title,
+    color,
     shareToken: generateToken(),
     rankedItems: [],
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
   })
   return ref.id
+}
+
+export async function updateListColor(listId: string, color: string) {
+  await updateDoc(doc(db, 'lists', listId), {
+    color,
+    updatedAt: serverTimestamp(),
+  })
 }
 
 export function addItem(listId: string, name: string): string {

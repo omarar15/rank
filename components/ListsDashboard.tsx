@@ -9,11 +9,62 @@ import { db, auth } from '@/lib/firebase'
 import { useAuth } from './AuthProvider'
 import { createList } from '@/lib/firestore'
 import { LogOut, Plus } from 'lucide-react'
-import { ListDoc } from '@/lib/types'
+import { ListDoc, ListColor, ItemDoc } from '@/lib/types'
+import { ColorPicker } from './ColorPicker'
+
+const COLOR_GRADIENT: Record<ListColor, string> = {
+  red: 'rgba(239,68,68,0.15)',
+  orange: 'rgba(249,115,22,0.15)',
+  yellow: 'rgba(234,179,8,0.15)',
+  green: 'rgba(34,197,94,0.15)',
+  sky: 'rgba(14,165,233,0.15)',
+  violet: 'rgba(139,92,246,0.15)',
+  pink: 'rgba(236,72,153,0.15)',
+  white: 'rgba(0,0,0,0)',
+}
 
 interface ListEntry {
   id: string
   data: ListDoc
+}
+
+function ListCard({ id, data }: ListEntry) {
+  const [itemNames, setItemNames] = useState<Map<string, string>>(new Map())
+
+  useEffect(() => {
+    const unsub = onSnapshot(collection(db, 'lists', id, 'items'), (snap) => {
+      const map = new Map<string, string>()
+      snap.docs.forEach((d) => map.set(d.id, (d.data() as ItemDoc).name))
+      setItemNames(map)
+    })
+    return unsub
+  }, [id])
+
+  const rankedNames = data.rankedItems
+    .map((itemId) => itemNames.get(itemId))
+    .filter((n): n is string => n !== undefined)
+    .slice(0, 5)
+
+  return (
+    <Link
+      href={`/lists/${id}`}
+      className="flex overflow-hidden rounded-2xl bg-white p-4 shadow-md active:bg-stone-50 ring ring-black/5"
+      style={{ backgroundImage: `linear-gradient(to bottom right, ${COLOR_GRADIENT[(data.color as ListColor) || 'white']}, white 70%)` }}
+    >
+      <span className="mb-3 font-medium flex-3">{data.title}</span>
+      <ol
+        className="flex flex-2 flex-col gap-0.5 text-sm text-stone-500/50 min-h-[108px]"
+        style={{ maskImage: 'linear-gradient(to bottom, black 40%, transparent)' }}
+      >
+        {rankedNames.map((name, i) => (
+          <li key={i} className="flex gap-1.5 truncate">
+            <span className="tabular-nums">{i + 1}.</span>
+            <span className="truncate">{name}</span>
+          </li>
+        ))}
+      </ol>
+    </Link>
+  )
 }
 
 export function ListsDashboard() {
@@ -23,6 +74,7 @@ export function ListsDashboard() {
   const [listsLoading, setListsLoading] = useState(true)
   const [showCreate, setShowCreate] = useState(false)
   const [newTitle, setNewTitle] = useState('')
+  const [newColor, setNewColor] = useState<ListColor>('white')
   const inputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
@@ -71,7 +123,7 @@ export function ListsDashboard() {
         >
           <LogOut className="h-4 w-4 -scale-x-100" />
         </button>
-        <h1 className="flex-1 text-center text-xl font-semibold tracking-tight">My lists</h1>
+        <h1 className="flex-1 text-center text-xl font-semibold tracking-tight">My Lists</h1>
         <button
           onClick={() => {
             setShowCreate(true)
@@ -84,40 +136,48 @@ export function ListsDashboard() {
       </div>
 
       {showCreate && (
-        <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/40 px-4 pt-32" onClick={() => { setShowCreate(false); setNewTitle('') }}>
+        <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/40 px-4 pt-32" onClick={() => { setShowCreate(false); setNewTitle(''); setNewColor('white') }}>
           <form
             onClick={(e) => e.stopPropagation()}
             onSubmit={(e) => {
               e.preventDefault()
               if (!newTitle.trim()) return
-              const listId = createList(user.uid, newTitle.trim())
+              const listId = createList(user.uid, newTitle.trim(), newColor)
               setShowCreate(false)
               setNewTitle('')
+              setNewColor('white')
               router.push(`/lists/${listId}`)
             }}
-            className="w-full max-w-sm rounded-2xl bg-white p-4 shadow-lg"
+            className="flex w-full max-w-sm flex-col gap-5 rounded-2xl bg-white p-4 shadow-lg"
           >
-            <input
-              ref={inputRef}
-              type="text"
-              placeholder="New list name…"
-              value={newTitle}
-              onChange={(e) => setNewTitle(e.target.value)}
-              className="w-full rounded-xl border border-stone-200 px-4 py-2.5 text-base outline-none focus:border-stone-400"
-              required
-            />
-            <div className="mt-3 flex justify-end gap-2">
+            <label className="flex flex-col gap-1.5">
+              <span className="text-xs font-medium text-stone-400">Name</span>
+              <input
+                ref={inputRef}
+                type="text"
+                placeholder="List name"
+                value={newTitle}
+                onChange={(e) => setNewTitle(e.target.value)}
+                className="w-full rounded-xl border border-stone-200 px-4 py-2.5 text-base outline-none focus:border-stone-400"
+                required
+              />
+            </label>
+            <div className="flex flex-col gap-1.5">
+              <span className="text-xs font-medium text-stone-400">Color</span>
+              <ColorPicker value={newColor} onChange={setNewColor} />
+            </div>
+            <div className="flex gap-2">
               <button
                 type="button"
-                onClick={() => { setShowCreate(false); setNewTitle('') }}
-                className="rounded-xl px-4 py-2 text-sm text-stone-400"
+                onClick={() => { setShowCreate(false); setNewTitle(''); setNewColor('white') }}
+                className="flex-1 rounded-xl border border-stone-200 px-4 py-2.5 text-sm font-medium text-stone-500"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={!newTitle.trim()}
-                className="rounded-lg bg-stone-900 px-4 py-2 text-sm font-medium text-white disabled:opacity-40"
+                className="flex-1 rounded-xl bg-stone-900 px-4 py-2.5 text-sm font-medium text-white disabled:opacity-40"
               >
                 Create
               </button>
@@ -138,15 +198,7 @@ export function ListsDashboard() {
         <ul className="flex flex-col gap-3">
           {lists.map(({ id, data }) => (
             <li key={id}>
-              <Link
-                href={`/lists/${id}`}
-                className="flex items-center justify-between rounded-2xl border border-stone-100 bg-white px-4 py-4 shadow-sm active:bg-stone-50"
-              >
-                <span className="font-medium">{data.title}</span>
-                <span className="text-sm text-stone-400">
-                  {data.rankedItems.length} ranked
-                </span>
-              </Link>
+              <ListCard id={id} data={data} />
             </li>
           ))}
         </ul>
