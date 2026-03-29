@@ -8,7 +8,7 @@ import { db } from '@/lib/firebase'
 import { useAuth } from './AuthProvider'
 import { AddItemForm } from './AddItemForm'
 import { deleteItem, deleteList, setRankedItems, updateItem, updateListColor } from '@/lib/firestore'
-import { Link2, Check, ArrowLeft, Trash2, GripVertical, Plus, EllipsisVertical, Pencil } from 'lucide-react'
+import { Link2, Check, ArrowLeft, Trash2, GripVertical, Plus, EllipsisVertical, Ellipsis, Pencil } from 'lucide-react'
 import { ListDoc, ItemDoc, ListColor } from '@/lib/types'
 import { ColorPicker } from './ColorPicker'
 
@@ -399,7 +399,7 @@ export function ListDetail({ listId }: Props) {
                         onClick={() => setOpenMenuItemId(openMenuItemId === item.id ? null : item.id)}
                         className="rounded-lg p-2 text-stone-400 pointer-hover:hover:bg-black/5 pointer-hover:hover:text-stone-600"
                       >
-                        <EllipsisVertical className="h-3.5 w-3.5" />
+                        <Ellipsis className="h-3.5 w-3.5" />
                       </button>
                       {openMenuItemId === item.id && (
                         <div className="absolute right-0 top-full z-50 mt-1 w-32 rounded-xl bg-white shadow-lg ring-1 ring-black/10 py-1.5 flex flex-col">
