@@ -45,6 +45,17 @@ const COLOR_GRADIENT: Record<ListColor, string> = {
   white: 'rgba(0,0,0,0)',
 }
 
+const COLOR_THEME: Record<ListColor, string> = {
+  red: '#fca5a5',
+  orange: '#fdba74',
+  yellow: '#fde047',
+  green: '#86efac',
+  sky: '#7dd3fc',
+  violet: '#c4b5fd',
+  pink: '#f9a8d4',
+  white: '#ffffff',
+}
+
 interface ItemEntry {
   id: string
   data: ItemDoc
@@ -86,7 +97,20 @@ export function ListDetail({ listId }: Props) {
     const color = (listData?.color as ListColor) || 'white'
     const gradient = `linear-gradient(to bottom, ${COLOR_GRADIENT[color]}, transparent)`
     document.documentElement.style.background = gradient
-    return () => { document.documentElement.style.background = '' }
+
+    let meta = document.querySelector<HTMLMetaElement>('meta[name="theme-color"]')
+    if (!meta) {
+      meta = document.createElement('meta')
+      meta.name = 'theme-color'
+      document.head.appendChild(meta)
+    }
+    meta.content = COLOR_THEME[color]
+
+    return () => {
+      document.documentElement.style.background = ''
+      const m = document.querySelector<HTMLMetaElement>('meta[name="theme-color"]')
+      if (m) m.content = '#ffffff'
+    }
   }, [listData?.color])
 
   useEffect(() => {
