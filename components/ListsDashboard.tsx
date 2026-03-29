@@ -1,13 +1,14 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { collection, query, where, orderBy, onSnapshot } from 'firebase/firestore'
 import { signOut } from 'firebase/auth'
 import { db, auth } from '@/lib/firebase'
 import { useAuth } from './AuthProvider'
-import { CreateListForm } from './CreateListForm'
+import { createList } from '@/lib/firestore'
+import { LogOut, Plus } from 'lucide-react'
 import { ListDoc } from '@/lib/types'
 
 interface ListEntry {
@@ -20,6 +21,9 @@ export function ListsDashboard() {
   const router = useRouter()
   const [lists, setLists] = useState<ListEntry[]>([])
   const [listsLoading, setListsLoading] = useState(true)
+  const [showCreate, setShowCreate] = useState(false)
+  const [newTitle, setNewTitle] = useState('')
+  const inputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     if (!loading && !user) {
@@ -60,19 +64,67 @@ export function ListsDashboard() {
 
   return (
     <main className="mx-auto min-h-dvh w-full max-w-md px-4 py-8">
-      <div className="mb-8 flex items-center justify-between">
-        <h1 className="text-xl font-semibold tracking-tight">My lists</h1>
+      <div className="mb-6 flex items-center gap-3">
         <button
           onClick={() => signOut(auth).then(() => router.push('/auth'))}
-          className="text-sm text-stone-400 underline"
+          className="rounded-lg p-2.5 text-stone-400 pointer-hover:hover:bg-stone-100 pointer-hover:hover:text-stone-600"
         >
-          Sign out
+          <LogOut className="h-4 w-4 -scale-x-100" />
+        </button>
+        <h1 className="flex-1 text-center text-xl font-semibold tracking-tight">My lists</h1>
+        <button
+          onClick={() => {
+            setShowCreate(true)
+            setTimeout(() => inputRef.current?.focus(), 0)
+          }}
+          className="rounded-lg bg-stone-900 p-2.5 text-white pointer-hover:hover:bg-stone-800"
+        >
+          <Plus className="h-4 w-4" />
         </button>
       </div>
 
-      <div className="mb-6">
-        <CreateListForm ownerId={user.uid} />
-      </div>
+      {showCreate && (
+        <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/40 px-4 pt-32" onClick={() => { setShowCreate(false); setNewTitle('') }}>
+          <form
+            onClick={(e) => e.stopPropagation()}
+            onSubmit={(e) => {
+              e.preventDefault()
+              if (!newTitle.trim()) return
+              const listId = createList(user.uid, newTitle.trim())
+              setShowCreate(false)
+              setNewTitle('')
+              router.push(`/lists/${listId}`)
+            }}
+            className="w-full max-w-sm rounded-2xl bg-white p-4 shadow-lg"
+          >
+            <input
+              ref={inputRef}
+              type="text"
+              placeholder="New list name…"
+              value={newTitle}
+              onChange={(e) => setNewTitle(e.target.value)}
+              className="w-full rounded-xl border border-stone-200 px-4 py-2.5 text-sm outline-none focus:border-stone-400"
+              required
+            />
+            <div className="mt-3 flex justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => { setShowCreate(false); setNewTitle('') }}
+                className="rounded-xl px-4 py-2 text-sm text-stone-400"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={!newTitle.trim()}
+                className="rounded-lg bg-stone-900 px-4 py-2 text-sm font-medium text-white disabled:opacity-40"
+              >
+                Create
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
 
       {listsLoading ? (
         <div className="flex flex-col gap-3">
@@ -81,7 +133,7 @@ export function ListsDashboard() {
           ))}
         </div>
       ) : lists.length === 0 ? (
-        <p className="text-center text-sm text-stone-400">No lists yet. Create one above.</p>
+        <p className="text-center text-sm text-stone-400">No lists yet. Tap + to create one.</p>
       ) : (
         <ul className="flex flex-col gap-3">
           {lists.map(({ id, data }) => (

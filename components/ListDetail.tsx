@@ -7,7 +7,7 @@ import { db } from '@/lib/firebase'
 import { useAuth } from './AuthProvider'
 import { AddItemForm } from './AddItemForm'
 import { deleteItem } from '@/lib/firestore'
-import { Copy, Check, ArrowLeft } from 'lucide-react'
+import { Copy, Check, ArrowLeft, ArrowUpDown, Trash2 } from 'lucide-react'
 import { ListDoc, ItemDoc } from '@/lib/types'
 
 interface ItemEntry {
@@ -117,11 +117,11 @@ export function ListDetail({ listId }: Props) {
   return (
     <main className="mx-auto min-h-dvh w-full max-w-md px-4 py-8">
       <div className="mb-6 flex items-center gap-3">
-        <Link href="/lists" className="rounded-md p-2.5 text-stone-400 pointer-hover:hover:bg-stone-100">
+        <Link href="/lists" className="rounded-lg p-2.5 text-stone-400 pointer-hover:hover:bg-stone-100 pointer-hover:hover:text-stone-600">
           <ArrowLeft className="h-4 w-4" />
         </Link>
         <h1 className="flex-1 text-center text-xl font-semibold tracking-tight">{listData.title}</h1>
-        <button onClick={handleCopy} className="rounded-md p-2.5 text-stone-400 pointer-hover:hover:bg-stone-100">
+        <button onClick={handleCopy} className="rounded-lg p-2.5 text-stone-400 pointer-hover:hover:bg-stone-100 pointer-hover:hover:text-stone-600">
           {copied ? <Check className="h-4 w-4 text-green-700" /> : <Copy className="h-4 w-4" />}
         </button>
       </div>
@@ -140,15 +140,15 @@ export function ListDetail({ listId }: Props) {
                 <span className="flex-1 text-sm font-medium">{item.data.name}</span>
                 <Link
                   href={`/lists/${listId}/rank/${item.id}`}
-                  className="text-xs text-stone-400 underline"
+                  className="rounded-lg p-2 text-stone-400 pointer-hover:hover:bg-stone-100 pointer-hover:hover:text-stone-600"
                 >
-                  Re-rank
+                  <ArrowUpDown className="h-3.5 w-3.5" />
                 </Link>
                 <button
                   onClick={() => handleDelete(item.id)}
-                  className="text-xs text-red-400 underline"
+                  className="rounded-lg p-2 text-stone-400 pointer-hover:hover:bg-red-50 pointer-hover:hover:text-red-500"
                 >
-                  Delete
+                  <Trash2 className="h-3.5 w-3.5" />
                 </button>
               </li>
             ))}
@@ -165,15 +165,15 @@ export function ListDetail({ listId }: Props) {
                 <span className="flex-1 text-sm font-medium">{item.data.name}</span>
                 <Link
                   href={`/lists/${listId}/rank/${item.id}`}
-                  className="text-xs font-medium text-stone-900 underline"
+                  className="rounded-lg p-2 text-stone-400 pointer-hover:hover:bg-stone-100 pointer-hover:hover:text-stone-600"
                 >
-                  Rank
+                  <ArrowUpDown className="h-3.5 w-3.5" />
                 </Link>
                 <button
                   onClick={() => handleDelete(item.id)}
-                  className="text-xs text-red-400 underline"
+                  className="rounded-lg p-2 text-stone-400 pointer-hover:hover:bg-red-50 pointer-hover:hover:text-red-500"
                 >
-                  Delete
+                  <Trash2 className="h-3.5 w-3.5" />
                 </button>
               </li>
             ))}
