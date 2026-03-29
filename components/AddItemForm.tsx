@@ -33,7 +33,7 @@ export function AddItemForm({ listId, existingNames }: Props) {
         value={name}
         onChange={(e) => setName(e.target.value)}
         onKeyDown={(e) => e.key === 'Enter' && handleAdd(true)}
-        className="w-full rounded-xl border border-stone-200 px-4 py-2.5 text-sm outline-none focus:border-stone-400"
+        className="w-full rounded-xl border border-stone-200 px-4 py-2.5 text-base outline-none focus:border-stone-400"
       />
       {isDuplicate && (
         <p className="text-xs text-red-400">Already in this list.</p>
