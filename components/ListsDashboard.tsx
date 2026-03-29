@@ -42,7 +42,20 @@ export function ListsDashboard() {
   }, [user])
 
   if (loading || !user) {
-    return <div className="flex min-h-dvh items-center justify-center text-zinc-400">Loading…</div>
+    return (
+      <main className="mx-auto min-h-dvh w-full max-w-md px-4 py-8">
+        <div className="mb-8 flex items-center justify-between">
+          <div className="h-7 w-24 animate-pulse rounded-lg bg-zinc-100" />
+          <div className="h-4 w-16 animate-pulse rounded bg-zinc-100" />
+        </div>
+        <div className="mb-6 h-10 animate-pulse rounded-xl bg-zinc-100" />
+        <div className="flex flex-col gap-3">
+          {[0, 1, 2].map((i) => (
+            <div key={i} className="h-14 animate-pulse rounded-2xl bg-zinc-100" />
+          ))}
+        </div>
+      </main>
+    )
   }
 
   return (
@@ -62,7 +75,11 @@ export function ListsDashboard() {
       </div>
 
       {listsLoading ? (
-        <p className="text-center text-sm text-zinc-400">Loading…</p>
+        <div className="flex flex-col gap-3">
+          {[0, 1, 2].map((i) => (
+            <div key={i} className="h-14 animate-pulse rounded-2xl bg-zinc-100" />
+          ))}
+        </div>
       ) : lists.length === 0 ? (
         <p className="text-center text-sm text-zinc-400">No lists yet. Create one above.</p>
       ) : (

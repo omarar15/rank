@@ -52,7 +52,21 @@ export function ListDetail({ listId }: Props) {
   }, [listId, user])
 
   if (loading || listLoading) {
-    return <div className="flex min-h-dvh items-center justify-center text-zinc-400">Loading…</div>
+    return (
+      <main className="mx-auto min-h-dvh w-full max-w-md px-4 py-8">
+        <div className="mb-6 flex items-center gap-3">
+          <div className="h-4 w-12 animate-pulse rounded bg-zinc-100" />
+          <div className="h-7 flex-1 animate-pulse rounded-lg bg-zinc-100" />
+          <div className="h-4 w-12 animate-pulse rounded bg-zinc-100" />
+        </div>
+        <div className="mb-8 h-10 animate-pulse rounded-xl bg-zinc-100" />
+        <div className="flex flex-col gap-2">
+          {[0, 1, 2, 3].map((i) => (
+            <div key={i} className="h-12 animate-pulse rounded-2xl bg-zinc-100" />
+          ))}
+        </div>
+      </main>
+    )
   }
 
   if (!listData) {
@@ -147,7 +161,11 @@ export function ListDetail({ listId }: Props) {
       )}
 
       {itemsLoading ? (
-        <p className="text-center text-sm text-zinc-400">Loading…</p>
+        <div className="flex flex-col gap-2">
+          {[0, 1, 2].map((i) => (
+            <div key={i} className="h-12 animate-pulse rounded-2xl bg-zinc-100" />
+          ))}
+        </div>
       ) : rankedItems.length === 0 && unrankedItems.length === 0 ? (
         <p className="text-center text-sm text-zinc-400">Add items above to get started.</p>
       ) : null}
