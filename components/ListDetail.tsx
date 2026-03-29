@@ -255,7 +255,7 @@ export function ListDetail({ listId }: Props) {
         </div>
         <button
           onClick={() => setShowAdd(true)}
-          className="rounded-lg bg-black/5 p-2.5 text-black/50 pointer-hover:hover:bg-black/10 pointer-hover:hover:text-black/70"
+          className="rounded-full bg-black/5 p-2.5 text-black/50 pointer-hover:hover:bg-black/10 pointer-hover:hover:text-black/70"
         >
           <Plus className="h-4 w-4" />
         </button>
