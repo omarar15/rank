@@ -192,7 +192,7 @@ export function ListsDashboard() {
       ) : lists.length === 0 ? (
         <div className="flex flex-1 sm:max-h-64 flex-col items-center justify-center gap-1 text-center">
           <p className="font-semibold text-stone-700">Create your first list</p>
-          <p className="max-w-[180px] text-sm text-stone-400 text-balance">Add items and rank them head‑to‑head until your list is ordered</p>
+          <p className="max-w-[240px] text-sm text-stone-400 text-balance">Add items and rank them head‑to‑head until your list is ordered</p>
         </div>
       ) : (
         <ul className="flex flex-col gap-3">
