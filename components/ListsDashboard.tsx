@@ -129,10 +129,11 @@ export function ListsDashboard() {
             setShowCreate(true)
             setTimeout(() => inputRef.current?.focus(), 0)
           }}
-          className="rounded-full bg-stone-200/60 p-2.5 text-stone-500 pointer-hover:hover:bg-stone-200 pointer-hover:hover:text-stone-700"
+          className="fixed bottom-6 right-4 z-40 rounded-full bg-stone-800 p-4 text-white shadow-lg sm:static sm:p-2.5 sm:shadow-none"
         >
           <Plus className="h-4 w-4" />
         </button>
+        <div className="w-9 sm:hidden" />
       </div>
 
       {showCreate && (

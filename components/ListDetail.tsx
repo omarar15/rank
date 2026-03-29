@@ -12,6 +12,17 @@ import { Link2, Check, ArrowLeft, Trash2, GripVertical, Plus, EllipsisVertical }
 import { ListDoc, ItemDoc, ListColor } from '@/lib/types'
 import { ColorPicker } from './ColorPicker'
 
+const COLOR_BG: Record<ListColor, string> = {
+  red: 'bg-red-500',
+  orange: 'bg-orange-500',
+  yellow: 'bg-yellow-500',
+  green: 'bg-green-500',
+  sky: 'bg-sky-500',
+  violet: 'bg-violet-500',
+  pink: 'bg-pink-500',
+  white: 'bg-stone-800',
+}
+
 const COLOR_GRADIENT: Record<ListColor, string> = {
   red: 'rgba(239,68,68,0.3)',
   orange: 'rgba(249,115,22,0.3)',
@@ -59,6 +70,13 @@ export function ListDetail({ listId }: Props) {
     })
     return unsub
   }, [listId])
+
+  useEffect(() => {
+    const color = (listData?.color as ListColor) || 'white'
+    const gradient = `linear-gradient(to bottom, ${COLOR_GRADIENT[color]}, transparent)`
+    document.documentElement.style.background = gradient
+    return () => { document.documentElement.style.background = '' }
+  }, [listData?.color])
 
   useEffect(() => {
     const unsub = onSnapshot(collection(db, 'lists', listId, 'items'), (snap) => {
@@ -202,11 +220,6 @@ export function ListDetail({ listId }: Props) {
   }
 
   return (
-    <>
-    <div
-      className="fixed inset-0 -z-10"
-      style={{ backgroundImage: `linear-gradient(to bottom right, ${COLOR_GRADIENT[(listData.color as ListColor) || 'white']}, transparent)` }}
-    />
     <main className="mx-auto flex min-h-dvh w-full max-w-md flex-col px-4 py-8">
       <div className="mb-6 flex items-center gap-2">
         <Link href="/lists" className="rounded-lg p-2.5 text-black/40 pointer-hover:hover:bg-black/5 pointer-hover:hover:text-black/70">
@@ -255,7 +268,7 @@ export function ListDetail({ listId }: Props) {
         </div>
         <button
           onClick={() => setShowAdd(true)}
-          className="rounded-full bg-black/5 p-2.5 text-black/50 pointer-hover:hover:bg-black/10 pointer-hover:hover:text-black/70"
+          className={`fixed bottom-6 right-4 z-40 rounded-full p-4 text-white shadow-lg sm:static sm:p-2.5 sm:shadow-none ${COLOR_BG[(listData.color as ListColor) || 'white']}`}
         >
           <Plus className="h-4 w-4" />
         </button>
@@ -365,6 +378,5 @@ export function ListDetail({ listId }: Props) {
         </div>
       ) : null}
     </main>
-    </>
   )
 }

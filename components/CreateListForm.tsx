@@ -27,6 +27,7 @@ export function CreateListForm({ ownerId }: Props) {
         value={title}
         onChange={(e) => setTitle(e.target.value)}
         className="flex-1 rounded-xl border border-stone-200 px-4 py-2.5 text-sm outline-none focus:border-stone-400"
+        autoFocus
         required
       />
       <button
