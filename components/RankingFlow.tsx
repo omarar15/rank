@@ -1,8 +1,9 @@
 'use client'
 
-import { useEffect, useReducer } from 'react'
+import { useEffect, useReducer, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { doc, getDoc, getDocs, collection } from 'firebase/firestore'
+import { AnimatePresence, motion } from 'motion/react'
 import { db } from '@/lib/firebase'
 import { useAuth } from './AuthProvider'
 import { setRankedItems } from '@/lib/firestore'
@@ -96,6 +97,9 @@ export function RankingFlow({ listId, itemId }: Props) {
   const { user, loading } = useAuth()
   const router = useRouter()
   const [state, dispatch] = useReducer(reducer, initialState)
+  const [exitDir, setExitDir] = useState<1 | -1>(1)
+  const [hasVoted, setHasVoted] = useState(false)
+  const [lastAction, setLastAction] = useState<'vote' | 'skip' | null>(null)
 
   useEffect(() => {
     if (!loading && !user) router.push('/auth')
@@ -152,21 +156,60 @@ export function RankingFlow({ listId, itemId }: Props) {
     return <div className="flex min-h-dvh items-center justify-center text-stone-400">Something went wrong.</div>
   }
 
-const { lo, hi, pivotIndex, rankedItems, itemNames, itemBeingRankedName } = state
+  const { lo, hi, pivotIndex, rankedItems, itemNames, itemBeingRankedName } = state
   const pivotName = itemNames[rankedItems[pivotIndex]] ?? rankedItems[pivotIndex]
   const totalComparisons = Math.ceil(Math.log2(rankedItems.length + 1))
   const done = totalComparisons - Math.ceil(Math.log2(hi - lo + 1))
 
+  function handleChoice(action: 'CHOOSE_BETTER' | 'CHOOSE_WORSE') {
+    // Chosen item goes up, unchosen goes down
+    // CHOOSE_BETTER = new item wins → pivot loses → pivot exits down (1)
+    // CHOOSE_WORSE = pivot wins → pivot exits up (-1)
+    setExitDir(action === 'CHOOSE_BETTER' ? 1 : -1)
+    setLastAction('vote')
+    if (!hasVoted) setHasVoted(true)
+    dispatch({ type: action })
+  }
+
+  const progress = totalComparisons > 0 ? (done + 1) / totalComparisons : 0
+  const radius = 8
+  const stroke = 3
+  const circumference = 2 * Math.PI * radius
+  const dashoffset = circumference * (1 - Math.min(progress, 1))
+
   return (
     <main className="flex min-h-dvh flex-col items-center justify-center px-6">
       <div className="w-full max-w-sm">
-        <p className="mb-6 text-center text-xs text-stone-400">
-          Which do you prefer? ({done + 1} of ~{totalComparisons})
-        </p>
+        <div className="mb-6 flex justify-center">
+          <svg width={2 * (radius + stroke)} height={2 * (radius + stroke)} className="-rotate-90">
+            <circle
+              cx={radius + stroke}
+              cy={radius + stroke}
+              r={radius}
+              fill="none"
+              stroke="#e7e5e4"
+              strokeWidth={stroke}
+            />
+            <circle
+              cx={radius + stroke}
+              cy={radius + stroke}
+              r={radius}
+              fill="none"
+              stroke="#78716c80"
+              strokeWidth={stroke}
+              strokeLinecap="round"
+              strokeDasharray={circumference}
+              strokeDashoffset={dashoffset}
+              style={{ transition: 'stroke-dashoffset 0.3s ease' }}
+            />
+          </svg>
+        </div>
+
+        <p className="mb-6 text-center text-base text-stone-400">Which do you prefer?</p>
 
         <div className="flex gap-3">
           <button
-            onClick={() => dispatch({ type: 'CHOOSE_BETTER' })}
+            onClick={() => handleChoice('CHOOSE_BETTER')}
             className="flex flex-1 flex-col items-center justify-center rounded-2xl border-2 border-stone-200 bg-white px-4 py-8 text-center font-semibold text-stone-900 active:bg-stone-50"
           >
             {itemBeingRankedName}
@@ -174,17 +217,34 @@ const { lo, hi, pivotIndex, rankedItems, itemNames, itemBeingRankedName } = stat
 
           <div className="flex items-center text-sm font-medium text-stone-400">vs</div>
 
-          <button
-            onClick={() => dispatch({ type: 'CHOOSE_WORSE' })}
-            className="flex flex-1 flex-col items-center justify-center rounded-2xl border-2 border-stone-200 bg-white px-4 py-8 text-center font-semibold text-stone-900 active:bg-stone-50"
-          >
-            {pivotName}
-          </button>
+          <AnimatePresence mode="popLayout" custom={{ dir: exitDir, action: lastAction }}>
+            <motion.button
+              key={pivotIndex}
+              custom={{ dir: exitDir, action: lastAction }}
+              variants={{
+                enter: ({ dir }: { dir: number }) => ({ opacity: 0, y: dir * -60, scale: 1 }),
+                pop: { opacity: 1, y: 0, scale: [1.1, 1] },
+                center: { opacity: 1, y: 0, scale: 1 },
+                exit: ({ dir, action }: { dir: number; action: string | null }) =>
+                  action === 'skip'
+                    ? { opacity: 1, y: 0, scale: 1 }
+                    : { opacity: 0, y: dir * 60, scale: 1 },
+              }}
+              initial={hasVoted ? (lastAction === 'skip' ? 'center' : 'enter') : false}
+              animate={lastAction === 'skip' ? 'pop' : 'center'}
+              exit="exit"
+              transition={{ type: 'spring', duration: 0.25, bounce: 0 }}
+              onClick={() => handleChoice('CHOOSE_WORSE')}
+              className="flex flex-1 flex-col items-center justify-center rounded-2xl border-2 border-stone-200 bg-white px-4 py-8 text-center font-semibold text-stone-900 active:bg-stone-50"
+            >
+              {pivotName}
+            </motion.button>
+          </AnimatePresence>
         </div>
 
         <button
-          onClick={() => dispatch({ type: 'SKIP' })}
-          className="mt-4 w-full py-2 text-sm text-stone-400 underline"
+          onClick={() => { setLastAction('skip'); dispatch({ type: 'SKIP' }) }}
+          className="mt-4 w-full py-2 text-base text-stone-400 underline"
         >
           Can't decide
         </button>

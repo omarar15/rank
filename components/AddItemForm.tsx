@@ -7,9 +7,11 @@ import { addItem } from '@/lib/firestore'
 interface Props {
   listId: string
   existingNames: string[]
+  onAdd?: () => void
+  autoFocus?: boolean
 }
 
-export function AddItemForm({ listId, existingNames }: Props) {
+export function AddItemForm({ listId, existingNames, onAdd, autoFocus }: Props) {
   const router = useRouter()
   const [name, setName] = useState('')
 
@@ -20,6 +22,7 @@ export function AddItemForm({ listId, existingNames }: Props) {
     if (!trimmed || isDuplicate) return
     const itemId = addItem(listId, trimmed)
     setName('')
+    onAdd?.()
     if (rank) router.push(`/lists/${listId}/rank/${itemId}`)
   }
 
@@ -33,6 +36,7 @@ export function AddItemForm({ listId, existingNames }: Props) {
         value={name}
         onChange={(e) => setName(e.target.value)}
         onKeyDown={(e) => e.key === 'Enter' && handleAdd(true)}
+        autoFocus={autoFocus}
         className="w-full rounded-xl border border-stone-200 px-4 py-2.5 text-base outline-none focus:border-stone-400"
       />
       {isDuplicate && (
