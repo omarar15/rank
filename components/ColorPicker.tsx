@@ -17,11 +17,12 @@ const COLOR_CLASS: Record<ListColor, string> = {
 interface Props {
   value: ListColor
   onChange: (color: ListColor) => void
+  columns?: 4 | 8
 }
 
-export function ColorPicker({ value, onChange }: Props) {
+export function ColorPicker({ value, onChange, columns = 4 }: Props) {
   return (
-    <div className="grid w-fit grid-cols-4 gap-2">
+    <div className={`grid w-fit gap-2 ${columns === 8 ? 'grid-cols-8' : 'grid-cols-4'}`}>
       {LIST_COLORS.map((c) => (
         <button
           key={c}
