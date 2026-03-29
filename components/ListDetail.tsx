@@ -281,7 +281,7 @@ export function ListDetail({ listId }: Props) {
           onClick={() => setShowAdd(true)}
           className={`fixed bottom-6 right-4 z-40 rounded-full p-4 text-white shadow-lg sm:static sm:p-2.5 sm:shadow-none ${COLOR_BG[(listData.color as ListColor) || 'white']}`}
         >
-          <Plus className="h-4 w-4" />
+          <Plus className="h-6 w-6 sm:h-4 sm:w-4" />
         </button>
       </div>
 
