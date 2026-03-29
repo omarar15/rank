@@ -73,7 +73,7 @@ export function ListDetail({ listId }: Props) {
 
   useEffect(() => {
     const color = (listData?.color as ListColor) || 'white'
-    const gradient = `linear-gradient(to bottom right, ${COLOR_GRADIENT[color]}, transparent)`
+    const gradient = `linear-gradient(to bottom, ${COLOR_GRADIENT[color]}, transparent)`
     document.documentElement.style.background = gradient
     return () => { document.documentElement.style.background = '' }
   }, [listData?.color])
