@@ -73,6 +73,7 @@ export function ListDetail({ listId }: Props) {
   const [dragging, setDragging] = useState(false)
   const dragStartYRef = useRef(0)
   const dragItemTopRef = useRef(0)
+  const dragItemHeightRef = useRef(0)
   const listRef = useRef<HTMLOListElement>(null)
   const [openMenuItemId, setOpenMenuItemId] = useState<string | null>(null)
   const [editingItem, setEditingItem] = useState<{ id: string; name: string; description: string } | null>(null)
@@ -158,6 +159,7 @@ export function ListDetail({ listId }: Props) {
   const shareUrl = listData ? `${window.location.origin}/share/${listData.shareToken}` : ''
 
   function getItemHeight(): number {
+    if (dragItemHeightRef.current > 0) return dragItemHeightRef.current
     if (!listRef.current) return 0
     const first = listRef.current.children[0] as HTMLElement | undefined
     if (!first) return 0
@@ -179,6 +181,7 @@ export function ListDetail({ listId }: Props) {
     el.setPointerCapture(e.pointerId)
     dragStartYRef.current = e.clientY
     dragItemTopRef.current = el.getBoundingClientRect().top
+    dragItemHeightRef.current = el.offsetHeight + 8 // height + gap-2
     setDragIndex(i)
     setDragY(0)
     setDragging(true)
@@ -208,6 +211,7 @@ export function ListDetail({ listId }: Props) {
     setDragging(false)
     setDragIndex(null)
     setDragY(0)
+    dragItemHeightRef.current = 0
   }
 
   function handleCopy() {
