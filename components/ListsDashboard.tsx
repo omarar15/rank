@@ -101,13 +101,13 @@ export function ListsDashboard() {
     return (
       <main className="mx-auto min-h-dvh w-full max-w-md px-4 py-8">
         <div className="mb-8 flex items-center justify-between">
-          <div className="h-7 w-24 animate-pulse rounded-lg bg-stone-100" />
-          <div className="h-4 w-16 animate-pulse rounded bg-stone-100" />
+          <div className="h-7 w-24 animate-pulse rounded-lg bg-black/5" />
+          <div className="h-4 w-16 animate-pulse rounded bg-black/5" />
         </div>
-        <div className="mb-6 h-10 animate-pulse rounded-xl bg-stone-100" />
+        <div className="mb-6 h-10 animate-pulse rounded-xl bg-black/5" />
         <div className="flex flex-col gap-3">
           {[0, 1, 2].map((i) => (
-            <div key={i} className="h-14 animate-pulse rounded-2xl bg-stone-100" />
+            <div key={i} className="h-14 animate-pulse rounded-2xl bg-black/5" />
           ))}
         </div>
       </main>
@@ -164,7 +164,7 @@ export function ListsDashboard() {
             </label>
             <div className="flex flex-col gap-1.5">
               <span className="text-xs font-medium text-stone-400">Color</span>
-              <ColorPicker value={newColor} onChange={setNewColor} />
+              <ColorPicker value={newColor} onChange={setNewColor} columns={8} />
             </div>
             <div className="flex gap-2">
               <button
@@ -189,7 +189,7 @@ export function ListsDashboard() {
       {listsLoading ? (
         <div className="flex flex-col gap-3">
           {[0, 1, 2].map((i) => (
-            <div key={i} className="h-14 animate-pulse rounded-2xl bg-stone-100" />
+            <div key={i} className="h-14 animate-pulse rounded-2xl bg-black/5" />
           ))}
         </div>
       ) : lists.length === 0 ? (

@@ -83,14 +83,14 @@ export function ListDetail({ listId }: Props) {
     return (
       <main className="mx-auto min-h-dvh w-full max-w-md px-4 py-8">
         <div className="mb-6 flex items-center gap-3">
-          <div className="h-4 w-12 animate-pulse rounded bg-stone-100" />
-          <div className="h-7 flex-1 animate-pulse rounded-lg bg-stone-100" />
-          <div className="h-4 w-12 animate-pulse rounded bg-stone-100" />
+          <div className="h-4 w-12 animate-pulse rounded bg-black/5" />
+          <div className="h-7 flex-1 animate-pulse rounded-lg bg-black/5" />
+          <div className="h-4 w-12 animate-pulse rounded bg-black/5" />
         </div>
-        <div className="mb-8 h-10 animate-pulse rounded-xl bg-stone-100" />
+        <div className="mb-8 h-10 animate-pulse rounded-xl bg-black/5" />
         <div className="flex flex-col gap-2">
           {[0, 1, 2, 3].map((i) => (
-            <div key={i} className="h-12 animate-pulse rounded-2xl bg-stone-100" />
+            <div key={i} className="h-12 animate-pulse rounded-2xl bg-black/5" />
           ))}
         </div>
       </main>
@@ -355,7 +355,7 @@ export function ListDetail({ listId }: Props) {
       {itemsLoading ? (
         <div className="flex flex-col gap-2">
           {[0, 1, 2].map((i) => (
-            <div key={i} className="h-12 animate-pulse rounded-2xl bg-stone-100" />
+            <div key={i} className="h-12 animate-pulse rounded-2xl bg-black/5" />
           ))}
         </div>
       ) : rankedItems.length === 0 && unrankedItems.length === 0 ? (
