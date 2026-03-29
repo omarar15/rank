@@ -418,7 +418,7 @@ export function ListDetail({ listId }: Props) {
                     onPointerUp={isDragged ? handlePointerUp : undefined}
                     style={{
                       transform: `translateY(${ty}px)`,
-                      zIndex: isDragged ? 50 : 0,
+                      zIndex: isDragged ? 50 : openMenuItemId === item.id ? 10 : 0,
                     }}
                     className={`flex items-start gap-3 ring-1 ring-black/5 rounded-2xl bg-white px-4 py-3 shadow-sm ${
                       isDragged
