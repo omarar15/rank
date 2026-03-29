@@ -119,7 +119,7 @@ export function ListsDashboard() {
       <div className="mb-6 flex items-center gap-3">
         <button
           onClick={() => signOut(auth).then(() => router.push('/auth'))}
-          className="rounded-lg p-2.5 text-stone-400 pointer-hover:hover:bg-stone-100 pointer-hover:hover:text-stone-600"
+          className="rounded-full p-2.5 text-stone-400 pointer-hover:hover:bg-stone-100 pointer-hover:hover:text-stone-600"
         >
           <LogOut className="h-4 w-4 -scale-x-100" />
         </button>

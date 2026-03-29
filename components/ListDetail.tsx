@@ -209,7 +209,7 @@ export function ListDetail({ listId }: Props) {
     />
     <main className="mx-auto flex min-h-dvh w-full max-w-md flex-col px-4 py-8">
       <div className="mb-6 flex items-center gap-2">
-        <Link href="/lists" className="rounded-lg p-2.5 text-black/40 pointer-hover:hover:bg-black/5 pointer-hover:hover:text-black/70">
+        <Link href="/lists" className="rounded-full p-2.5 text-black/40 pointer-hover:hover:bg-black/5 pointer-hover:hover:text-black/70">
           <ArrowLeft className="h-4 w-4" />
         </Link>
         <h1 className="flex-1 text-xl font-semibold tracking-tight">{listData.title}</h1>
@@ -217,7 +217,7 @@ export function ListDetail({ listId }: Props) {
           <div className="relative" ref={menuRef}>
             <button
               onClick={() => setShowMenu(!showMenu)}
-              className="rounded-lg p-2.5 text-black/40 pointer-hover:hover:bg-black/5 pointer-hover:hover:text-black/70"
+              className="rounded-full p-2.5 text-black/40 pointer-hover:hover:bg-black/5 pointer-hover:hover:text-black/70"
             >
               <EllipsisVertical className="h-4 w-4 rotate-90" />
             </button>
@@ -249,7 +249,7 @@ export function ListDetail({ listId }: Props) {
               </div>
             )}
           </div>
-          <button onClick={handleCopy} className="rounded-lg p-2.5 text-black/40 pointer-hover:hover:bg-black/5 pointer-hover:hover:text-black/70">
+          <button onClick={handleCopy} className="rounded-full p-2.5 text-black/40 pointer-hover:hover:bg-black/5 pointer-hover:hover:text-black/70">
             {copied ? <Check className="h-4 w-4 text-green-700" /> : <Link2 className="h-4 w-4" />}
           </button>
         </div>
@@ -313,7 +313,7 @@ export function ListDetail({ listId }: Props) {
                     <span className="flex-1 text-base font-medium">{item.data.name}</span>
                     <button
                       onClick={() => handleDelete(item.id)}
-                      className="rounded-lg p-2 text-stone-400 pointer-hover:hover:bg-red-50 pointer-hover:hover:text-red-500"
+                      className="rounded-full p-2 text-stone-400 pointer-hover:hover:bg-red-50 pointer-hover:hover:text-red-500"
                     >
                       <Trash2 className="h-3.5 w-3.5" />
                     </button>
