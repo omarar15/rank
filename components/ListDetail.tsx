@@ -7,7 +7,7 @@ import { db } from '@/lib/firebase'
 import { useAuth } from './AuthProvider'
 import { AddItemForm } from './AddItemForm'
 import { deleteItem, setRankedItems } from '@/lib/firestore'
-import { Copy, Check, ArrowLeft, ArrowUpDown, Trash2, GripVertical } from 'lucide-react'
+import { Copy, Check, ArrowLeft, Trash2, GripVertical } from 'lucide-react'
 import { ListDoc, ItemDoc } from '@/lib/types'
 
 interface ItemEntry {
@@ -247,19 +247,19 @@ export function ListDetail({ listId }: Props) {
 
       {unrankedItems.length > 0 && (
         <section>
-          <h2 className="mb-3 text-xs font-semibold tracking-wider text-stone-400">Unranked</h2>
+          <h2 className="mb-3 text-sm font-semibold text-center text-stone-400">Unranked</h2>
           <ul className="flex flex-col gap-2">
             {unrankedItems.map((item) => (
               <li key={item.id} className="flex items-center gap-3 rounded-2xl border border-stone-100 bg-white px-4 py-3 shadow-sm">
-                <span className="invisible"><GripVertical className="h-4 w-4" /></span>
-                <span className="w-6" />
+                <div className="flex w-[calc(16px+24px+12px)] items-center">
+                  <Link
+                    href={`/lists/${listId}/rank/${item.id}`}
+                    className="rounded-lg px-2 py-[3px] text-stone-400 pointer-hover:hover:bg-stone-100 pointer-hover:hover:text-stone-600"
+                  >
+                    <span className="text-sm font-medium">Rank</span>
+                  </Link>
+                </div>
                 <span className="flex-1 text-sm font-medium">{item.data.name}</span>
-                <Link
-                  href={`/lists/${listId}/rank/${item.id}`}
-                  className="rounded-lg p-2 text-stone-400 pointer-hover:hover:bg-stone-100 pointer-hover:hover:text-stone-600"
-                >
-                  <ArrowUpDown className="h-3.5 w-3.5" />
-                </Link>
                 <button
                   onClick={() => handleDelete(item.id)}
                   className="rounded-lg p-2 text-stone-400 pointer-hover:hover:bg-red-50 pointer-hover:hover:text-red-500"

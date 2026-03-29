@@ -28,15 +28,17 @@ type RankAction =
 
 function nextSkipPivot(lo: number, hi: number, current: number, skipped: number[]): { pivotIndex: number; skippedInRange: number[] } {
   const skippedInRange = [...skipped, current]
-  const available = Array.from({ length: hi - lo }, (_, i) => lo + i).filter(
-    (i) => !skippedInRange.includes(i),
-  )
-  if (available.length > 0) {
+  const all = Array.from({ length: hi - lo }, (_, i) => lo + i)
+  let available = all.filter((i) => !skippedInRange.includes(i))
+  if (available.length === 0) {
+    // All exhausted — reset and exclude only the current pivot
+    available = all.filter((i) => i !== current)
+    if (available.length === 0) return { pivotIndex: current, skippedInRange: [] }
     const pivotIndex = available[Math.floor(Math.random() * available.length)]
-    return { pivotIndex, skippedInRange }
+    return { pivotIndex, skippedInRange: [] }
   }
-  // All exhausted — fall back to mid
-  return { pivotIndex: Math.floor((lo + hi) / 2), skippedInRange }
+  const pivotIndex = available[Math.floor(Math.random() * available.length)]
+  return { pivotIndex, skippedInRange }
 }
 
 function reducer(state: RankState, action: RankAction): RankState {
