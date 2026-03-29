@@ -37,6 +37,13 @@ export async function updateListColor(listId: string, color: string) {
   })
 }
 
+export async function updateListTitle(listId: string, title: string) {
+  await updateDoc(doc(db, 'lists', listId), {
+    title,
+    updatedAt: serverTimestamp(),
+  })
+}
+
 export function addItem(listId: string, name: string, description?: string): string {
   const ref = doc(collection(db, 'lists', listId, 'items'))
   const data: Record<string, unknown> = { name, createdAt: serverTimestamp() }
