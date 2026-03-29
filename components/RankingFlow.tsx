@@ -4,6 +4,7 @@ import { useEffect, useReducer, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { doc, getDoc, getDocs, collection } from 'firebase/firestore'
 import { AnimatePresence, motion } from 'motion/react'
+import { useWebHaptics } from 'web-haptics/react'
 import { db } from '@/lib/firebase'
 import { useAuth } from './AuthProvider'
 import { setRankedItems } from '@/lib/firestore'
@@ -100,6 +101,7 @@ export function RankingFlow({ listId, itemId }: Props) {
   const [exitDir, setExitDir] = useState<1 | -1>(1)
   const [hasVoted, setHasVoted] = useState(false)
   const [lastAction, setLastAction] = useState<'vote' | 'skip' | null>(null)
+  const { trigger } = useWebHaptics()
 
   useEffect(() => {
     if (!loading && !user) router.push('/')
@@ -166,6 +168,11 @@ export function RankingFlow({ listId, itemId }: Props) {
     // Chosen item goes up, unchosen goes down
     // CHOOSE_BETTER = new item wins → pivot loses → pivot exits down (1)
     // CHOOSE_WORSE = pivot wins → pivot exits up (-1)
+    const isLastVote =
+      action === 'CHOOSE_BETTER'
+        ? state.lo === state.pivotIndex
+        : state.pivotIndex + 1 === state.hi
+    trigger(isLastVote ? 'success' : 'light')
     setExitDir(action === 'CHOOSE_BETTER' ? 1 : -1)
     setLastAction('vote')
     if (!hasVoted) setHasVoted(true)
