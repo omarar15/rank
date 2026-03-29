@@ -7,8 +7,8 @@ import { doc, collection, onSnapshot } from 'firebase/firestore'
 import { db } from '@/lib/firebase'
 import { useAuth } from './AuthProvider'
 import { AddItemForm } from './AddItemForm'
-import { deleteItem, deleteList, setRankedItems, updateListColor } from '@/lib/firestore'
-import { Link2, Check, ArrowLeft, Trash2, GripVertical, Plus, EllipsisVertical } from 'lucide-react'
+import { deleteItem, deleteList, setRankedItems, updateItem, updateListColor } from '@/lib/firestore'
+import { Link2, Check, ArrowLeft, Trash2, GripVertical, Plus, EllipsisVertical, Pencil } from 'lucide-react'
 import { ListDoc, ItemDoc, ListColor } from '@/lib/types'
 import { ColorPicker } from './ColorPicker'
 
@@ -72,6 +72,9 @@ export function ListDetail({ listId }: Props) {
   const dragStartYRef = useRef(0)
   const dragItemTopRef = useRef(0)
   const listRef = useRef<HTMLOListElement>(null)
+  const [openMenuItemId, setOpenMenuItemId] = useState<string | null>(null)
+  const [editingItem, setEditingItem] = useState<{ id: string; name: string; description: string } | null>(null)
+  const itemMenuRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const unsub = onSnapshot(doc(db, 'lists', listId), (snap) => {
@@ -107,6 +110,17 @@ export function ListDetail({ listId }: Props) {
     document.addEventListener('pointerdown', onClickOutside)
     return () => document.removeEventListener('pointerdown', onClickOutside)
   }, [showMenu])
+
+  useEffect(() => {
+    if (!openMenuItemId) return
+    function onClickOutside(e: MouseEvent) {
+      if (itemMenuRef.current && !itemMenuRef.current.contains(e.target as Node)) {
+        setOpenMenuItemId(null)
+      }
+    }
+    document.addEventListener('pointerdown', onClickOutside)
+    return () => document.removeEventListener('pointerdown', onClickOutside)
+  }, [openMenuItemId])
 
   if (loading || listLoading) {
     return (
@@ -293,6 +307,46 @@ export function ListDetail({ listId }: Props) {
         </div>
       )}
 
+      {editingItem && (
+        <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/40 px-4 pt-32" onClick={() => setEditingItem(null)}>
+          <div onClick={(e) => e.stopPropagation()} className="w-full max-w-sm rounded-2xl bg-white p-4 shadow-lg flex flex-col gap-3">
+            <h2 className="text-sm font-semibold text-stone-700">Edit item</h2>
+            <input
+              type="text"
+              value={editingItem.name}
+              onChange={(e) => setEditingItem({ ...editingItem, name: e.target.value })}
+              autoFocus
+              className="w-full rounded-xl border border-stone-200 px-4 py-2.5 text-base outline-none focus:border-stone-400"
+            />
+            <textarea
+              placeholder="Description (optional)"
+              value={editingItem.description}
+              onChange={(e) => setEditingItem({ ...editingItem, description: e.target.value })}
+              rows={2}
+              className="w-full resize-none rounded-xl border border-stone-200 px-4 py-2.5 text-sm text-stone-600 outline-none focus:border-stone-400"
+            />
+            <div className="flex gap-2">
+              <button
+                onClick={() => setEditingItem(null)}
+                className="flex-1 rounded-xl border border-stone-200 px-4 py-2.5 text-sm font-medium text-stone-700"
+              >
+                Cancel
+              </button>
+              <button
+                disabled={!editingItem.name.trim()}
+                onClick={() => {
+                  updateItem(listId, editingItem.id, editingItem.name.trim(), editingItem.description.trim() || undefined)
+                  setEditingItem(null)
+                }}
+                className={`flex-1 rounded-xl px-4 py-2.5 text-sm font-medium text-white disabled:opacity-40 ${COLOR_BG[(listData.color as ListColor) || 'white']}`}
+              >
+                Save
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {rankedItems.length > 0 && (() => {
         const target = dragIndex !== null ? getOverIndex(dragIndex, dragY) : null
         const h = getItemHeight()
@@ -340,12 +394,32 @@ export function ListDetail({ listId }: Props) {
                         <span className="block text-xs text-stone-400 mt-0.5 truncate">{item.data.description}</span>
                       )}
                     </span>
-                    <button
-                      onClick={() => handleDelete(item.id)}
-                      className="rounded-lg p-2 text-stone-400 pointer-hover:hover:bg-red-50 pointer-hover:hover:text-red-500"
-                    >
-                      <Trash2 className="h-3.5 w-3.5" />
-                    </button>
+                    <div className="relative" ref={openMenuItemId === item.id ? itemMenuRef : undefined}>
+                      <button
+                        onClick={() => setOpenMenuItemId(openMenuItemId === item.id ? null : item.id)}
+                        className="rounded-lg p-2 text-stone-400 pointer-hover:hover:bg-black/5 pointer-hover:hover:text-stone-600"
+                      >
+                        <EllipsisVertical className="h-3.5 w-3.5" />
+                      </button>
+                      {openMenuItemId === item.id && (
+                        <div className="absolute right-0 top-full z-50 mt-1 w-32 rounded-xl bg-white shadow-lg ring-1 ring-black/10 py-1.5 flex flex-col">
+                          <button
+                            onClick={() => { setEditingItem({ id: item.id, name: item.data.name, description: item.data.description ?? '' }); setOpenMenuItemId(null) }}
+                            className="flex items-center gap-2 px-3 py-2 text-sm text-stone-700 pointer-hover:hover:bg-stone-50"
+                          >
+                            <Pencil className="h-3.5 w-3.5" />
+                            Edit
+                          </button>
+                          <button
+                            onClick={() => { handleDelete(item.id); setOpenMenuItemId(null) }}
+                            className="flex items-center gap-2 px-3 py-2 text-sm text-red-700 pointer-hover:hover:bg-red-50"
+                          >
+                            <Trash2 className="h-3.5 w-3.5" />
+                            Delete
+                          </button>
+                        </div>
+                      )}
+                    </div>
                   </li>
                 )
               })}
@@ -374,12 +448,32 @@ export function ListDetail({ listId }: Props) {
                     <span className="block text-xs text-stone-400 mt-0.5 truncate">{item.data.description}</span>
                   )}
                 </span>
-                <button
-                  onClick={() => handleDelete(item.id)}
-                  className="rounded-lg p-2 text-stone-400 pointer-hover:hover:bg-red-50 pointer-hover:hover:text-red-500"
-                >
-                  <Trash2 className="h-3.5 w-3.5" />
-                </button>
+                <div className="relative" ref={openMenuItemId === item.id ? itemMenuRef : undefined}>
+                  <button
+                    onClick={() => setOpenMenuItemId(openMenuItemId === item.id ? null : item.id)}
+                    className="rounded-lg p-2 text-stone-400 pointer-hover:hover:bg-black/5 pointer-hover:hover:text-stone-600"
+                  >
+                    <EllipsisVertical className="h-3.5 w-3.5" />
+                  </button>
+                  {openMenuItemId === item.id && (
+                    <div className="absolute right-0 top-full z-50 mt-1 w-32 rounded-xl bg-white shadow-lg ring-1 ring-black/10 py-1.5 flex flex-col">
+                      <button
+                        onClick={() => { setEditingItem({ id: item.id, name: item.data.name, description: item.data.description ?? '' }); setOpenMenuItemId(null) }}
+                        className="flex items-center gap-2 px-3 py-2 text-sm text-stone-700 pointer-hover:hover:bg-stone-50"
+                      >
+                        <Pencil className="h-3.5 w-3.5" />
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => { handleDelete(item.id); setOpenMenuItemId(null) }}
+                        className="flex items-center gap-2 px-3 py-2 text-sm text-red-700 pointer-hover:hover:bg-red-50"
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                        Delete
+                      </button>
+                    </div>
+                  )}
+                </div>
               </li>
             ))}
           </ul>

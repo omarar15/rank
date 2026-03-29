@@ -45,6 +45,12 @@ export function addItem(listId: string, name: string, description?: string): str
   return ref.id
 }
 
+export async function updateItem(listId: string, itemId: string, name: string, description?: string) {
+  const data: Record<string, unknown> = { name }
+  data.description = description ?? null
+  await updateDoc(doc(db, 'lists', listId, 'items', itemId), data)
+}
+
 export async function deleteItem(listId: string, itemId: string) {
   await deleteDoc(doc(db, 'lists', listId, 'items', itemId))
   await updateDoc(doc(db, 'lists', listId), {
