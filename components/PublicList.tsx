@@ -70,11 +70,11 @@ export function PublicList({ shareToken }: Props) {
   }, [shareToken])
 
   if (loading) {
-    return <div className="flex min-h-dvh items-center justify-center text-zinc-400">Loading…</div>
+    return <div className="flex min-h-dvh items-center justify-center text-stone-400">Loading…</div>
   }
 
   if (notFound) {
-    return <div className="flex min-h-dvh items-center justify-center text-zinc-400">List not found.</div>
+    return <div className="flex min-h-dvh items-center justify-center text-stone-400">List not found.</div>
   }
 
   return (
@@ -82,15 +82,15 @@ export function PublicList({ shareToken }: Props) {
       <h1 className="mb-8 text-xl font-semibold tracking-tight">{title}</h1>
 
       {rankedItems.length === 0 ? (
-        <p className="text-center text-sm text-zinc-400">No ranked items yet.</p>
+        <p className="text-center text-sm text-stone-400">No ranked items yet.</p>
       ) : (
         <ol className="flex flex-col gap-2">
           {rankedItems.map((item, i) => (
             <li
               key={item.id}
-              className="flex items-center gap-3 rounded-2xl border border-zinc-100 bg-white px-4 py-3 shadow-sm"
+              className="flex items-center gap-3 rounded-2xl border border-stone-100 bg-white px-4 py-3 shadow-sm"
             >
-              <span className="w-6 text-right text-sm font-bold text-zinc-300">{i + 1}</span>
+              <span className="w-6 text-right text-sm font-bold text-stone-300">{i + 1}</span>
               <span className="flex-1 text-sm font-medium">{item.name}</span>
             </li>
           ))}

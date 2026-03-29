@@ -7,6 +7,7 @@ import { db } from '@/lib/firebase'
 import { useAuth } from './AuthProvider'
 import { AddItemForm } from './AddItemForm'
 import { deleteItem } from '@/lib/firestore'
+import { Copy, Check, ArrowLeft } from 'lucide-react'
 import { ListDoc, ItemDoc } from '@/lib/types'
 
 interface ItemEntry {
@@ -48,14 +49,14 @@ export function ListDetail({ listId }: Props) {
     return (
       <main className="mx-auto min-h-dvh w-full max-w-md px-4 py-8">
         <div className="mb-6 flex items-center gap-3">
-          <div className="h-4 w-12 animate-pulse rounded bg-zinc-100" />
-          <div className="h-7 flex-1 animate-pulse rounded-lg bg-zinc-100" />
-          <div className="h-4 w-12 animate-pulse rounded bg-zinc-100" />
+          <div className="h-4 w-12 animate-pulse rounded bg-stone-100" />
+          <div className="h-7 flex-1 animate-pulse rounded-lg bg-stone-100" />
+          <div className="h-4 w-12 animate-pulse rounded bg-stone-100" />
         </div>
-        <div className="mb-8 h-10 animate-pulse rounded-xl bg-zinc-100" />
+        <div className="mb-8 h-10 animate-pulse rounded-xl bg-stone-100" />
         <div className="flex flex-col gap-2">
           {[0, 1, 2, 3].map((i) => (
-            <div key={i} className="h-12 animate-pulse rounded-2xl bg-zinc-100" />
+            <div key={i} className="h-12 animate-pulse rounded-2xl bg-stone-100" />
           ))}
         </div>
       </main>
@@ -63,7 +64,7 @@ export function ListDetail({ listId }: Props) {
   }
 
   if (!listData) {
-    return <div className="flex min-h-dvh items-center justify-center text-zinc-400">List not found.</div>
+    return <div className="flex min-h-dvh items-center justify-center text-stone-400">List not found.</div>
   }
 
   const isOwner = user?.uid === listData.ownerId
@@ -88,18 +89,18 @@ export function ListDetail({ listId }: Props) {
       <main className="mx-auto min-h-dvh w-full max-w-md px-4 py-8">
         <div className="mb-8 flex items-center gap-3">
           <h1 className="flex-1 text-xl font-semibold tracking-tight">{listData.title}</h1>
-          <Link href="/auth" className="text-sm text-zinc-400 underline">Sign in</Link>
+          <Link href="/auth" className="text-sm text-stone-400 underline">Sign in</Link>
         </div>
 
         {itemsLoading ? (
-          <p className="text-center text-sm text-zinc-400">Loading…</p>
+          <p className="text-center text-sm text-stone-400">Loading…</p>
         ) : rankedItems.length === 0 ? (
-          <p className="text-center text-sm text-zinc-400">No ranked items yet.</p>
+          <p className="text-center text-sm text-stone-400">No ranked items yet.</p>
         ) : (
           <ol className="flex flex-col gap-2">
             {rankedItems.map((item, i) => (
-              <li key={item.id} className="flex items-center gap-3 rounded-2xl border border-zinc-100 bg-white px-4 py-3 shadow-sm">
-                <span className="w-6 text-right text-sm font-bold text-zinc-300">{i + 1}</span>
+              <li key={item.id} className="flex items-center gap-3 rounded-2xl border border-stone-100 bg-white px-4 py-3 shadow-sm">
+                <span className="w-6 text-right text-sm font-bold text-stone-300">{i + 1}</span>
                 <span className="flex-1 text-sm font-medium">{item.data.name}</span>
               </li>
             ))}
@@ -116,10 +117,12 @@ export function ListDetail({ listId }: Props) {
   return (
     <main className="mx-auto min-h-dvh w-full max-w-md px-4 py-8">
       <div className="mb-6 flex items-center gap-3">
-        <Link href="/lists" className="text-sm text-zinc-400">← Lists</Link>
-        <h1 className="flex-1 text-xl font-semibold tracking-tight">{listData.title}</h1>
-        <button onClick={handleCopy} className="text-sm text-zinc-400 underline">
-          {copied ? 'Copied!' : 'Share'}
+        <Link href="/lists" className="rounded-md p-2.5 text-stone-400 pointer-hover:hover:bg-stone-100">
+          <ArrowLeft className="h-4 w-4" />
+        </Link>
+        <h1 className="flex-1 text-center text-xl font-semibold tracking-tight">{listData.title}</h1>
+        <button onClick={handleCopy} className="rounded-md p-2.5 text-stone-400 pointer-hover:hover:bg-stone-100">
+          {copied ? <Check className="h-4 w-4 text-green-700" /> : <Copy className="h-4 w-4" />}
         </button>
       </div>
 
@@ -129,15 +132,15 @@ export function ListDetail({ listId }: Props) {
 
       {rankedItems.length > 0 && (
         <section className="mb-8">
-          <h2 className="mb-3 text-xs font-semibold uppercase tracking-wider text-zinc-400">Ranked</h2>
+          <h2 className="mb-3 text-xs font-semibold uppercase tracking-wider text-stone-400">Ranked</h2>
           <ol className="flex flex-col gap-2">
             {rankedItems.map((item, i) => (
-              <li key={item.id} className="flex items-center gap-3 rounded-2xl border border-zinc-100 bg-white px-4 py-3 shadow-sm">
-                <span className="w-6 text-right text-sm font-bold text-zinc-300">{i + 1}</span>
+              <li key={item.id} className="flex items-center gap-3 rounded-2xl border border-stone-100 bg-white px-4 py-3 shadow-sm">
+                <span className="w-6 text-right text-sm font-bold text-stone-300">{i + 1}</span>
                 <span className="flex-1 text-sm font-medium">{item.data.name}</span>
                 <Link
                   href={`/lists/${listId}/rank/${item.id}`}
-                  className="text-xs text-zinc-400 underline"
+                  className="text-xs text-stone-400 underline"
                 >
                   Re-rank
                 </Link>
@@ -155,14 +158,14 @@ export function ListDetail({ listId }: Props) {
 
       {unrankedItems.length > 0 && (
         <section>
-          <h2 className="mb-3 text-xs font-semibold uppercase tracking-wider text-zinc-400">Unranked</h2>
+          <h2 className="mb-3 text-xs font-semibold uppercase tracking-wider text-stone-400">Unranked</h2>
           <ul className="flex flex-col gap-2">
             {unrankedItems.map((item) => (
-              <li key={item.id} className="flex items-center gap-3 rounded-2xl border border-zinc-100 bg-white px-4 py-3 shadow-sm">
+              <li key={item.id} className="flex items-center gap-3 rounded-2xl border border-stone-100 bg-white px-4 py-3 shadow-sm">
                 <span className="flex-1 text-sm font-medium">{item.data.name}</span>
                 <Link
                   href={`/lists/${listId}/rank/${item.id}`}
-                  className="text-xs font-medium text-zinc-900 underline"
+                  className="text-xs font-medium text-stone-900 underline"
                 >
                   Rank
                 </Link>
@@ -181,11 +184,11 @@ export function ListDetail({ listId }: Props) {
       {itemsLoading ? (
         <div className="flex flex-col gap-2">
           {[0, 1, 2].map((i) => (
-            <div key={i} className="h-12 animate-pulse rounded-2xl bg-zinc-100" />
+            <div key={i} className="h-12 animate-pulse rounded-2xl bg-stone-100" />
           ))}
         </div>
       ) : rankedItems.length === 0 && unrankedItems.length === 0 ? (
-        <p className="text-center text-sm text-zinc-400">Add items above to get started.</p>
+        <p className="text-center text-sm text-stone-400">Add items above to get started.</p>
       ) : null}
     </main>
   )

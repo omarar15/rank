@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+@custom-variant pointer-hover (@media (hover: hover));
+
+
 button, a, [role="button"] {
   cursor: pointer;
 }

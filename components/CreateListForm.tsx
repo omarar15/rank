@@ -26,13 +26,13 @@ export function CreateListForm({ ownerId }: Props) {
         placeholder="New list name…"
         value={title}
         onChange={(e) => setTitle(e.target.value)}
-        className="flex-1 rounded-xl border border-zinc-200 px-4 py-2.5 text-sm outline-none focus:border-zinc-400"
+        className="flex-1 rounded-xl border border-stone-200 px-4 py-2.5 text-sm outline-none focus:border-stone-400"
         required
       />
       <button
         type="submit"
         disabled={!title.trim()}
-        className="rounded-xl bg-zinc-900 px-4 py-2.5 text-sm font-medium text-white disabled:opacity-40"
+        className="rounded-xl bg-stone-900 px-4 py-2.5 text-sm font-medium text-white disabled:opacity-40"
       >
         Create
       </button>
