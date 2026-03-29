@@ -252,7 +252,7 @@ export function ListDetail({ listId }: Props) {
           <ArrowLeft className="h-4 w-4" />
         </Link>
         <h1 className="flex-1 text-xl font-semibold tracking-tight">{listData.title}</h1>
-        <div className="flex items-center gap-1">
+        <div className="flex flex-row-reverse items-center gap-1 sm:flex-row">
           <div className="relative" ref={menuRef}>
             <button
               onClick={() => setShowMenu(!showMenu)}
