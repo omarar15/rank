@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { addItem, setRankedItems } from '@/lib/firestore'
 import { ListColor } from '@/lib/types'
+import { useWebHaptics } from 'web-haptics/react'
 
 const COLOR_PRIMARY_BTN: Record<ListColor, string> = {
   red: 'bg-red-500',
@@ -27,6 +28,7 @@ interface Props {
 
 export function AddItemForm({ listId, existingNames, currentRankedIds, color = 'white', onAdd, autoFocus }: Props) {
   const router = useRouter()
+  const { trigger } = useWebHaptics()
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')
 
@@ -73,14 +75,14 @@ export function AddItemForm({ listId, existingNames, currentRankedIds, color = '
       )}
       <div className="flex gap-2">
         <button
-          onClick={() => handleAdd(false)}
+          onClick={() => { trigger('light'); handleAdd(false) }}
           disabled={empty || isDuplicate}
           className="flex-1 rounded-xl border border-stone-200 px-4 py-2.5 text-sm font-medium text-stone-700 disabled:text-stone-300"
         >
           Add unranked
         </button>
         <button
-          onClick={() => handleAdd(true)}
+          onClick={() => { trigger('light'); handleAdd(true) }}
           disabled={empty || isDuplicate}
           className={`flex-1 rounded-xl px-4 py-2.5 text-sm font-medium text-white disabled:text-white/40 ${COLOR_PRIMARY_BTN[color]}`}
         >

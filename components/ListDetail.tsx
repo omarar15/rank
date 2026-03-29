@@ -11,6 +11,7 @@ import { deleteItem, deleteList, setRankedItems, updateItem, updateListColor, up
 import { Link2, Check, ArrowLeft, Trash2, GripVertical, Plus, EllipsisVertical, Ellipsis, Pencil } from 'lucide-react'
 import { ListDoc, ItemDoc, ListColor } from '@/lib/types'
 import { ColorPicker } from './ColorPicker'
+import { useWebHaptics } from 'web-haptics/react'
 
 const COLOR_BG: Record<ListColor, string> = {
   red: 'bg-red-500',
@@ -57,6 +58,7 @@ interface Props {
 export function ListDetail({ listId }: Props) {
   const { user, loading } = useAuth()
   const router = useRouter()
+  const { trigger } = useWebHaptics()
   const [listData, setListData] = useState<ListDoc | null>(null)
   const [items, setItems] = useState<ItemEntry[]>([])
   const [listLoading, setListLoading] = useState(true)
@@ -255,7 +257,7 @@ export function ListDetail({ listId }: Props) {
         <div className="flex flex-row-reverse items-center gap-1 sm:flex-row">
           <div className="relative" ref={menuRef}>
             <button
-              onClick={() => setShowMenu(!showMenu)}
+              onClick={() => { trigger('light'); setShowMenu(!showMenu) }}
               className="rounded-lg p-2.5 text-black/40 pointer-hover:hover:bg-black/5 pointer-hover:hover:text-black/70"
             >
               <EllipsisVertical className="h-4 w-4 rotate-90" />
@@ -275,6 +277,7 @@ export function ListDetail({ listId }: Props) {
                 <div className="border-t border-black/5" />
                 <button
                   onClick={() => {
+                    trigger('light')
                     setEditingListName(listData.title)
                     setShowMenu(false)
                   }}
@@ -286,6 +289,7 @@ export function ListDetail({ listId }: Props) {
                 <div className="border-t border-black/5" />
                 <button
                   onClick={() => {
+                    trigger('light')
                     if (confirm('Delete this list?')) {
                       deleteList(listId)
                       router.push('/lists')
@@ -299,12 +303,12 @@ export function ListDetail({ listId }: Props) {
               </div>
             )}
           </div>
-          <button onClick={handleCopy} className="rounded-lg p-2.5 text-black/40 pointer-hover:hover:bg-black/5 pointer-hover:hover:text-black/70">
+          <button onClick={() => { trigger('light'); handleCopy() }} className="rounded-lg p-2.5 text-black/40 pointer-hover:hover:bg-black/5 pointer-hover:hover:text-black/70">
             {copied ? <Check className="h-4 w-4 text-green-700" /> : <Link2 className="h-4 w-4" />}
           </button>
         </div>
         <button
-          onClick={() => setShowAdd(true)}
+          onClick={() => { trigger('light'); setShowAdd(true) }}
           className={`fixed bottom-6 right-4 z-40 rounded-full p-4 text-white shadow-lg sm:static sm:p-2.5 sm:shadow-none ${COLOR_BG[(listData.color as ListColor) || 'white']}`}
         >
           <Plus className="h-6 w-6 sm:h-4 sm:w-4" />
@@ -332,7 +336,7 @@ export function ListDetail({ listId }: Props) {
             />
             <div className="flex gap-2">
               <button
-                onClick={() => setEditingListName(null)}
+                onClick={() => { trigger('light'); setEditingListName(null) }}
                 className="flex-1 rounded-xl border border-stone-200 px-4 py-2.5 text-sm font-medium text-stone-700"
               >
                 Cancel
@@ -340,6 +344,7 @@ export function ListDetail({ listId }: Props) {
               <button
                 disabled={!editingListName.trim()}
                 onClick={() => {
+                  trigger('light')
                   updateListTitle(listId, editingListName.trim())
                   setEditingListName(null)
                 }}
@@ -372,7 +377,7 @@ export function ListDetail({ listId }: Props) {
             />
             <div className="flex gap-2">
               <button
-                onClick={() => setEditingItem(null)}
+                onClick={() => { trigger('light'); setEditingItem(null) }}
                 className="flex-1 rounded-xl border border-stone-200 px-4 py-2.5 text-sm font-medium text-stone-700"
               >
                 Cancel
@@ -380,6 +385,7 @@ export function ListDetail({ listId }: Props) {
               <button
                 disabled={!editingItem.name.trim()}
                 onClick={() => {
+                  trigger('light')
                   updateItem(listId, editingItem.id, editingItem.name.trim(), editingItem.description.trim() || undefined)
                   setEditingItem(null)
                 }}
@@ -435,7 +441,7 @@ export function ListDetail({ listId }: Props) {
                     <span className="w-6 pt-[3px] text-right text-base font-medium text-stone-400">{i + 1}</span>
                     <button
                       className="flex-1 min-w-0 pt-[3px] text-left"
-                      onClick={() => { if (!dragging) setEditingItem({ id: item.id, name: item.data.name, description: item.data.description ?? '' }) }}
+                      onClick={() => { if (!dragging) { trigger('light'); setEditingItem({ id: item.id, name: item.data.name, description: item.data.description ?? '' }) } }}
                     >
                       <span className="block text-base font-medium">{item.data.name}</span>
                       {item.data.description && (
@@ -444,7 +450,7 @@ export function ListDetail({ listId }: Props) {
                     </button>
                     <div className="relative" ref={openMenuItemId === item.id ? itemMenuRef : undefined}>
                       <button
-                        onClick={() => setOpenMenuItemId(openMenuItemId === item.id ? null : item.id)}
+                        onClick={() => { trigger('light'); setOpenMenuItemId(openMenuItemId === item.id ? null : item.id) }}
                         className="rounded-lg p-2 text-stone-400 pointer-hover:hover:bg-black/5 pointer-hover:hover:text-stone-600"
                       >
                         <Ellipsis className="h-3.5 w-3.5" />
@@ -452,14 +458,14 @@ export function ListDetail({ listId }: Props) {
                       {openMenuItemId === item.id && (
                         <div className="absolute right-0 top-full z-50 mt-1 w-32 rounded-xl bg-white shadow-lg ring-1 ring-black/10 py-1.5 flex flex-col">
                           <button
-                            onClick={() => { setEditingItem({ id: item.id, name: item.data.name, description: item.data.description ?? '' }); setOpenMenuItemId(null) }}
+                            onClick={() => { trigger('light'); setEditingItem({ id: item.id, name: item.data.name, description: item.data.description ?? '' }); setOpenMenuItemId(null) }}
                             className="flex items-center gap-2 px-3 py-2 text-sm text-stone-700 pointer-hover:hover:bg-stone-50"
                           >
                             <Pencil className="h-3.5 w-3.5" />
                             Edit
                           </button>
                           <button
-                            onClick={() => { handleDelete(item.id); setOpenMenuItemId(null) }}
+                            onClick={() => { trigger('light'); handleDelete(item.id); setOpenMenuItemId(null) }}
                             className="flex items-center gap-2 px-3 py-2 text-sm text-red-700 pointer-hover:hover:bg-red-50"
                           >
                             <Trash2 className="h-3.5 w-3.5" />
@@ -485,7 +491,7 @@ export function ListDetail({ listId }: Props) {
                 <div className="flex w-[calc(20px+24px+12px)] items-center">
                   {rankedIds.length === 0 ? (
                     <button
-                      onClick={() => setRankedItems(listId, [item.id])}
+                      onClick={() => { trigger('light'); setRankedItems(listId, [item.id]) }}
                       className={`rounded-lg px-2 py-[3px] ${COLOR_TEXT[(listData.color as ListColor) || 'white']}`}
                     >
                       <span className="text-base font-medium">Rank</span>
@@ -501,7 +507,7 @@ export function ListDetail({ listId }: Props) {
                 </div>
                 <button
                   className="flex-1 min-w-0 pt-[3px] text-left"
-                  onClick={() => setEditingItem({ id: item.id, name: item.data.name, description: item.data.description ?? '' })}
+                  onClick={() => { trigger('light'); setEditingItem({ id: item.id, name: item.data.name, description: item.data.description ?? '' }) }}
                 >
                   <span className="block text-base font-medium">{item.data.name}</span>
                   {item.data.description && (
@@ -510,7 +516,7 @@ export function ListDetail({ listId }: Props) {
                 </button>
                 <div className="relative" ref={openMenuItemId === item.id ? itemMenuRef : undefined}>
                   <button
-                    onClick={() => setOpenMenuItemId(openMenuItemId === item.id ? null : item.id)}
+                    onClick={() => { trigger('light'); setOpenMenuItemId(openMenuItemId === item.id ? null : item.id) }}
                     className="rounded-lg p-2 text-stone-400 pointer-hover:hover:bg-black/5 pointer-hover:hover:text-stone-600"
                   >
                     <EllipsisVertical className="h-3.5 w-3.5" />
@@ -518,14 +524,14 @@ export function ListDetail({ listId }: Props) {
                   {openMenuItemId === item.id && (
                     <div className="absolute right-0 top-full z-50 mt-1 w-32 rounded-xl bg-white shadow-lg ring-1 ring-black/10 py-1.5 flex flex-col">
                       <button
-                        onClick={() => { setEditingItem({ id: item.id, name: item.data.name, description: item.data.description ?? '' }); setOpenMenuItemId(null) }}
+                        onClick={() => { trigger('light'); setEditingItem({ id: item.id, name: item.data.name, description: item.data.description ?? '' }); setOpenMenuItemId(null) }}
                         className="flex items-center gap-2 px-3 py-2 text-sm text-stone-700 pointer-hover:hover:bg-stone-50"
                       >
                         <Pencil className="h-3.5 w-3.5" />
                         Edit
                       </button>
                       <button
-                        onClick={() => { handleDelete(item.id); setOpenMenuItemId(null) }}
+                        onClick={() => { trigger('light'); handleDelete(item.id); setOpenMenuItemId(null) }}
                         className="flex items-center gap-2 px-3 py-2 text-sm text-red-700 pointer-hover:hover:bg-red-50"
                       >
                         <Trash2 className="h-3.5 w-3.5" />

@@ -11,6 +11,7 @@ import { createList } from '@/lib/firestore'
 import { LogOut, Plus } from 'lucide-react'
 import { ListDoc, ListColor, ItemDoc } from '@/lib/types'
 import { ColorPicker } from './ColorPicker'
+import { useWebHaptics } from 'web-haptics/react'
 
 const COLOR_GRADIENT: Record<ListColor, string> = {
   red: 'rgba(239,68,68,0.15)',
@@ -69,6 +70,7 @@ function ListCard({ id, data }: ListEntry) {
 export function ListsDashboard() {
   const { user, loading } = useAuth()
   const router = useRouter()
+  const { trigger } = useWebHaptics()
   const [lists, setLists] = useState<ListEntry[]>([])
   const [listsLoading, setListsLoading] = useState(true)
   const [showCreate, setShowCreate] = useState(false)
@@ -125,14 +127,14 @@ export function ListsDashboard() {
     <main className="mx-auto flex min-h-dvh w-full max-w-md flex-col px-4 py-8">
       <div className="mb-6 flex items-center gap-3">
         <button
-          onClick={() => signOut(auth).then(() => router.push('/'))}
+          onClick={() => { trigger('light'); signOut(auth).then(() => router.push('/')) }}
           className="rounded-lg p-2.5 text-stone-400 pointer-hover:hover:bg-stone-100 pointer-hover:hover:text-stone-600"
         >
           <LogOut className="h-4 w-4 -scale-x-100" />
         </button>
         <h1 className="flex-1 text-center text-xl font-semibold tracking-tight">My Lists</h1>
         <button
-          onClick={() => setShowCreate(true)}
+          onClick={() => { trigger('light'); setShowCreate(true) }}
           className="fixed bottom-6 right-4 z-40 rounded-full bg-stone-800 p-4 text-white shadow-lg sm:static sm:p-2.5 sm:shadow-none"
         >
           <Plus className="h-6 w-6 sm:h-4 sm:w-4" />
@@ -174,7 +176,7 @@ export function ListsDashboard() {
             <div className="flex gap-2">
               <button
                 type="button"
-                onClick={() => { setShowCreate(false); setNewTitle(''); setNewColor('white') }}
+                onClick={() => { trigger('light'); setShowCreate(false); setNewTitle(''); setNewColor('white') }}
                 className="flex-1 rounded-xl border border-stone-200 px-4 py-2.5 text-sm font-medium text-stone-500"
               >
                 Cancel
@@ -182,6 +184,7 @@ export function ListsDashboard() {
               <button
                 type="submit"
                 disabled={!newTitle.trim()}
+                onClick={() => trigger('light')}
                 className="flex-1 rounded-xl bg-stone-900 px-4 py-2.5 text-sm font-medium text-white disabled:opacity-40"
               >
                 Create

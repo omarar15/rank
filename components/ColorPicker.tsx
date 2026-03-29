@@ -2,6 +2,7 @@
 
 import { LIST_COLORS, ListColor } from '@/lib/types'
 import { Check } from 'lucide-react'
+import { useWebHaptics } from 'web-haptics/react'
 
 const COLOR_CLASS: Record<ListColor, string> = {
   red: 'bg-red-500',
@@ -21,13 +22,14 @@ interface Props {
 }
 
 export function ColorPicker({ value, onChange, columns = 4 }: Props) {
+  const { trigger } = useWebHaptics()
   return (
     <div className={`grid w-fit gap-2 ${columns === 8 ? 'grid-cols-8' : 'grid-cols-4'}`}>
       {LIST_COLORS.map((c) => (
         <button
           key={c}
           type="button"
-          onClick={() => onChange(c)}
+          onClick={() => { trigger('light'); onChange(c) }}
           className={`flex h-5 w-5 items-center justify-center rounded-full border-2 ${c === 'white' ? 'border-black/15' : 'border-white/50'} ${COLOR_CLASS[c]}`}
         >
           {value === c && <Check className={`h-3 w-3 ${c === 'white' ? 'text-black/40' : 'text-white'}`} />}
