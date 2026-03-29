@@ -15,6 +15,16 @@ export function OtpForm({ phone, confirmation, onBack }: Props) {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
+  function formatOtp(digits: string): string {
+    if (digits.length <= 3) return digits
+    return `${digits.slice(0, 3)} ${digits.slice(3, 6)}`
+  }
+
+  function handleOtpChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const digits = e.target.value.replace(/\D/g, '').slice(0, 6)
+    setOtp(digits)
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setError('')
@@ -37,12 +47,12 @@ export function OtpForm({ phone, confirmation, onBack }: Props) {
       <input
         type="text"
         inputMode="numeric"
-        pattern="[0-9]{6}"
-        maxLength={6}
-        placeholder="123456"
-        value={otp}
-        onChange={(e) => setOtp(e.target.value)}
-        className="w-full rounded-xl border border-stone-200 px-4 py-3 text-center text-2xl tracking-widest outline-none focus:border-stone-400"
+        maxLength={7}
+        placeholder="123 456"
+        value={formatOtp(otp)}
+        onChange={handleOtpChange}
+        className="w-full rounded-xl border border-stone-200 py-3 text-2xl tracking-widest outline-none focus:border-stone-400"
+        style={{ fontVariantNumeric: 'tabular-nums', paddingLeft: 'calc((100% - 7ch - 7 * 0.1em) / 2)', paddingRight: 'calc((100% - 7ch - 7 * 0.1em) / 2)' }}
         autoFocus
         required
       />
