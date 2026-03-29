@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { collection, query, where, orderBy, onSnapshot } from 'firebase/firestore'
@@ -75,11 +75,10 @@ export function ListsDashboard() {
   const [showCreate, setShowCreate] = useState(false)
   const [newTitle, setNewTitle] = useState('')
   const [newColor, setNewColor] = useState<ListColor>('white')
-  const inputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     if (!loading && !user) {
-      router.push('/auth')
+      router.push('/')
     }
   }, [user, loading, router])
 
@@ -118,17 +117,14 @@ export function ListsDashboard() {
     <main className="mx-auto flex min-h-dvh w-full max-w-md flex-col px-4 py-8">
       <div className="mb-6 flex items-center gap-3">
         <button
-          onClick={() => signOut(auth).then(() => router.push('/auth'))}
+          onClick={() => signOut(auth).then(() => router.push('/'))}
           className="rounded-lg p-2.5 text-stone-400 pointer-hover:hover:bg-stone-100 pointer-hover:hover:text-stone-600"
         >
           <LogOut className="h-4 w-4 -scale-x-100" />
         </button>
         <h1 className="flex-1 text-center text-xl font-semibold tracking-tight">My Lists</h1>
         <button
-          onClick={() => {
-            setShowCreate(true)
-            setTimeout(() => inputRef.current?.focus(), 0)
-          }}
+          onClick={() => setShowCreate(true)}
           className="fixed bottom-6 right-4 z-40 rounded-full bg-stone-800 p-4 text-white shadow-lg sm:static sm:p-2.5 sm:shadow-none"
         >
           <Plus className="h-6 w-6 sm:h-4 sm:w-4" />
@@ -154,7 +150,7 @@ export function ListsDashboard() {
             <label className="flex flex-col gap-1.5">
               <span className="text-xs font-medium text-stone-400">Name</span>
               <input
-                ref={inputRef}
+                autoFocus
                 type="text"
                 placeholder="List name"
                 value={newTitle}
@@ -194,9 +190,9 @@ export function ListsDashboard() {
           ))}
         </div>
       ) : lists.length === 0 ? (
-        <div className="flex flex-1 max-h-64 flex-col items-center justify-center text-black/40">
-          <p className="text-sm font-medium">No lists yet</p>
-          <p className="mt-1 text-xs">Tap the + button to create one</p>
+        <div className="flex flex-1 sm:max-h-64 flex-col items-center justify-center gap-1 text-center">
+          <p className="font-semibold text-stone-700">Create your first list</p>
+          <p className="max-w-[320px] text-sm text-stone-400 text-balance">Add items and rank them head‑to‑head until your list is ordered</p>
         </div>
       ) : (
         <ul className="flex flex-col gap-3">

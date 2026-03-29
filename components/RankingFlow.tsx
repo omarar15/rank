@@ -102,7 +102,7 @@ export function RankingFlow({ listId, itemId }: Props) {
   const [lastAction, setLastAction] = useState<'vote' | 'skip' | null>(null)
 
   useEffect(() => {
-    if (!loading && !user) router.push('/auth')
+    if (!loading && !user) router.push('/')
   }, [user, loading, router])
 
   useEffect(() => {

@@ -62,18 +62,26 @@ export function PhoneAuthForm() {
 
   if (confirmation) {
     return (
-      <OtpForm
-        phone={phone.startsWith('+') ? phone : `+1${phone}`}
-        confirmation={confirmation}
-        onBack={() => setConfirmation(null)}
-      />
+      <>
+        <div className="mb-8 text-center">
+          <h1 className="text-5xl font-bold tracking-tight">rank</h1>
+        </div>
+        <OtpForm
+          phone={phone.startsWith('+') ? phone : `+1${phone}`}
+          confirmation={confirmation}
+          onBack={() => setConfirmation(null)}
+        />
+      </>
     )
   }
 
   return (
     <>
+      <div className="mb-8 text-center">
+        <h1 className="text-5xl font-bold tracking-tight">rank</h1>
+        <p className="mt-2 text-stone-400">rank anything</p>
+      </div>
       <form onSubmit={handleSend} className="flex flex-col gap-4">
-        <label className="text-sm font-medium text-stone-700">Phone number</label>
         <div className="flex items-center rounded-xl border border-stone-200 px-4 py-3 focus-within:border-stone-400">
           <span className="mr-1 text-stone-400">+1</span>
           <input

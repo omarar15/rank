@@ -51,7 +51,7 @@ export function OtpForm({ phone, confirmation, onBack }: Props) {
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-      <p className="text-sm text-stone-500">
+      <p className="text-center text-sm text-stone-500">
         Enter the 6-digit code sent to <span className="font-medium text-stone-800">{phone}</span>
       </p>
       <input

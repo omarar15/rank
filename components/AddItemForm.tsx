@@ -3,15 +3,28 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { addItem } from '@/lib/firestore'
+import { ListColor } from '@/lib/types'
+
+const COLOR_PRIMARY_BTN: Record<ListColor, string> = {
+  red: 'bg-red-500',
+  orange: 'bg-orange-500',
+  yellow: 'bg-yellow-500',
+  green: 'bg-green-500',
+  sky: 'bg-sky-500',
+  violet: 'bg-violet-500',
+  pink: 'bg-pink-500',
+  white: 'bg-stone-900',
+}
 
 interface Props {
   listId: string
   existingNames: string[]
+  color?: ListColor
   onAdd?: () => void
   autoFocus?: boolean
 }
 
-export function AddItemForm({ listId, existingNames, onAdd, autoFocus }: Props) {
+export function AddItemForm({ listId, existingNames, color = 'white', onAdd, autoFocus }: Props) {
   const router = useRouter()
   const [name, setName] = useState('')
 
@@ -46,14 +59,14 @@ export function AddItemForm({ listId, existingNames, onAdd, autoFocus }: Props) 
         <button
           onClick={() => handleAdd(false)}
           disabled={empty || isDuplicate}
-          className="flex-1 rounded-xl border border-stone-200 px-4 py-2.5 text-sm font-medium text-stone-700 disabled:opacity-40"
+          className="flex-1 rounded-xl border border-stone-200 px-4 py-2.5 text-sm font-medium text-stone-700 disabled:text-stone-300"
         >
           Add unranked
         </button>
         <button
           onClick={() => handleAdd(true)}
           disabled={empty || isDuplicate}
-          className="flex-1 rounded-xl bg-stone-900 px-4 py-2.5 text-sm font-medium text-white disabled:opacity-40"
+          className={`flex-1 rounded-xl px-4 py-2.5 text-sm font-medium text-white disabled:text-white/40 ${COLOR_PRIMARY_BTN[color]}`}
         >
           Add &amp; rank
         </button>

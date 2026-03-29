@@ -24,14 +24,14 @@ const COLOR_BG: Record<ListColor, string> = {
 }
 
 const COLOR_TEXT: Record<ListColor, string> = {
-  red: 'text-red-500 pointer-hover:hover:bg-red-50 pointer-hover:hover:text-red-600',
-  orange: 'text-orange-500 pointer-hover:hover:bg-orange-50 pointer-hover:hover:text-orange-600',
-  yellow: 'text-yellow-500 pointer-hover:hover:bg-yellow-50 pointer-hover:hover:text-yellow-600',
-  green: 'text-green-500 pointer-hover:hover:bg-green-50 pointer-hover:hover:text-green-600',
-  sky: 'text-sky-500 pointer-hover:hover:bg-sky-50 pointer-hover:hover:text-sky-600',
-  violet: 'text-violet-500 pointer-hover:hover:bg-violet-50 pointer-hover:hover:text-violet-600',
-  pink: 'text-pink-500 pointer-hover:hover:bg-pink-50 pointer-hover:hover:text-pink-600',
-  white: 'text-black/40 pointer-hover:hover:bg-black/5 pointer-hover:hover:text-black/70',
+  red: 'text-red-600 pointer-hover:hover:bg-red-50 pointer-hover:hover:text-red-700',
+  orange: 'text-orange-600 pointer-hover:hover:bg-orange-50 pointer-hover:hover:text-orange-700',
+  yellow: 'text-yellow-600 pointer-hover:hover:bg-yellow-50 pointer-hover:hover:text-yellow-700',
+  green: 'text-green-600 pointer-hover:hover:bg-green-50 pointer-hover:hover:text-green-700',
+  sky: 'text-sky-600 pointer-hover:hover:bg-sky-50 pointer-hover:hover:text-sky-700',
+  violet: 'text-violet-600 pointer-hover:hover:bg-violet-50 pointer-hover:hover:text-violet-700',
+  pink: 'text-pink-600 pointer-hover:hover:bg-pink-50 pointer-hover:hover:text-pink-700',
+  white: 'text-black/50 pointer-hover:hover:bg-black/5 pointer-hover:hover:text-black/80',
 }
 
 const COLOR_GRADIENT: Record<ListColor, string> = {
@@ -205,7 +205,7 @@ export function ListDetail({ listId }: Props) {
       <main className="mx-auto min-h-dvh w-full max-w-md px-4 py-8">
         <div className="mb-8 flex items-center gap-3">
           <h1 className="flex-1 text-xl font-semibold tracking-tight">{listData.title}</h1>
-          <Link href="/auth" className="text-sm text-stone-400 underline">Sign in</Link>
+          <Link href="/" className="text-sm text-stone-400 underline">Sign in</Link>
         </div>
 
         {itemsLoading ? (
@@ -288,7 +288,7 @@ export function ListDetail({ listId }: Props) {
       {showAdd && (
         <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/40 px-4 pt-32" onClick={() => setShowAdd(false)}>
           <div onClick={(e) => e.stopPropagation()} className="w-full max-w-sm rounded-2xl bg-white p-4 shadow-lg">
-            <AddItemForm listId={listId} existingNames={items.map((i) => i.data.name)} onAdd={() => setShowAdd(false)} autoFocus />
+            <AddItemForm listId={listId} existingNames={items.map((i) => i.data.name)} color={(listData.color as ListColor) || 'white'} onAdd={() => setShowAdd(false)} autoFocus />
           </div>
         </div>
       )}
@@ -383,7 +383,7 @@ export function ListDetail({ listId }: Props) {
           ))}
         </div>
       ) : rankedItems.length === 0 && unrankedItems.length === 0 ? (
-        <div className="flex flex-1 max-h-64 flex-col items-center justify-center text-black/40">
+        <div className="flex flex-1 sm:max-h-64 flex-col items-center justify-center text-black/40">
           <p className="text-sm font-medium">No items yet</p>
           <p className="mt-1 text-xs">Tap the + button to add your first item</p>
         </div>
