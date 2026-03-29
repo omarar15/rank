@@ -24,14 +24,14 @@ const COLOR_BG: Record<ListColor, string> = {
 }
 
 const COLOR_TEXT: Record<ListColor, string> = {
-  red: 'text-red-500 pointer-hover:hover:bg-red-50 pointer-hover:hover:text-red-600',
-  orange: 'text-orange-500 pointer-hover:hover:bg-orange-50 pointer-hover:hover:text-orange-600',
-  yellow: 'text-yellow-500 pointer-hover:hover:bg-yellow-50 pointer-hover:hover:text-yellow-600',
-  green: 'text-green-500 pointer-hover:hover:bg-green-50 pointer-hover:hover:text-green-600',
-  sky: 'text-sky-500 pointer-hover:hover:bg-sky-50 pointer-hover:hover:text-sky-600',
-  violet: 'text-violet-500 pointer-hover:hover:bg-violet-50 pointer-hover:hover:text-violet-600',
-  pink: 'text-pink-500 pointer-hover:hover:bg-pink-50 pointer-hover:hover:text-pink-600',
-  white: 'text-black/40 pointer-hover:hover:bg-black/5 pointer-hover:hover:text-black/70',
+  red: 'text-red-600 pointer-hover:hover:bg-red-50 pointer-hover:hover:text-red-700',
+  orange: 'text-orange-600 pointer-hover:hover:bg-orange-50 pointer-hover:hover:text-orange-700',
+  yellow: 'text-yellow-600 pointer-hover:hover:bg-yellow-50 pointer-hover:hover:text-yellow-700',
+  green: 'text-green-600 pointer-hover:hover:bg-green-50 pointer-hover:hover:text-green-700',
+  sky: 'text-sky-600 pointer-hover:hover:bg-sky-50 pointer-hover:hover:text-sky-700',
+  violet: 'text-violet-600 pointer-hover:hover:bg-violet-50 pointer-hover:hover:text-violet-700',
+  pink: 'text-pink-600 pointer-hover:hover:bg-pink-50 pointer-hover:hover:text-pink-700',
+  white: 'text-black/50 pointer-hover:hover:bg-black/5 pointer-hover:hover:text-black/80',
 }
 
 const COLOR_GRADIENT: Record<ListColor, string> = {
