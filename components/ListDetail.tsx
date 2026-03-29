@@ -480,12 +480,21 @@ export function ListDetail({ listId }: Props) {
             {unrankedItems.map((item) => (
               <li key={item.id} className="flex items-start gap-3 rounded-2xl border border-stone-100 bg-white px-4 py-3 shadow-sm">
                 <div className="flex w-[calc(20px+24px+12px)] items-center">
-                  <Link
-                    href={`/lists/${listId}/rank/${item.id}`}
-                    className={`rounded-lg px-2 py-[3px] ${COLOR_TEXT[(listData.color as ListColor) || 'white']}`}
-                  >
-                    <span className="text-base font-medium">Rank</span>
-                  </Link>
+                  {rankedIds.length === 0 ? (
+                    <button
+                      onClick={() => setRankedItems(listId, [item.id])}
+                      className={`rounded-lg px-2 py-[3px] ${COLOR_TEXT[(listData.color as ListColor) || 'white']}`}
+                    >
+                      <span className="text-base font-medium">Rank</span>
+                    </button>
+                  ) : (
+                    <Link
+                      href={`/lists/${listId}/rank/${item.id}`}
+                      className={`rounded-lg px-2 py-[3px] ${COLOR_TEXT[(listData.color as ListColor) || 'white']}`}
+                    >
+                      <span className="text-base font-medium">Rank</span>
+                    </Link>
+                  )}
                 </div>
                 <span className="flex-1 min-w-0">
                   <span className="block text-base font-medium">{item.data.name}</span>
