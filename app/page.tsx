@@ -22,7 +22,7 @@ export default function Home() {
       <div className="w-full max-w-sm">
         <div className="mb-8 text-center">
           <h1 className="text-5xl font-bold tracking-tight">rank</h1>
-          <p className="mt-2 text-stone-400">rank anything, instantly</p>
+          <p className="mt-2 text-stone-400">rank anything</p>
         </div>
         <PhoneAuthForm />
       </div>
