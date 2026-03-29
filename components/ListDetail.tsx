@@ -23,6 +23,17 @@ const COLOR_BG: Record<ListColor, string> = {
   white: 'bg-stone-800',
 }
 
+const COLOR_TEXT: Record<ListColor, string> = {
+  red: 'text-red-500 pointer-hover:hover:bg-red-50 pointer-hover:hover:text-red-600',
+  orange: 'text-orange-500 pointer-hover:hover:bg-orange-50 pointer-hover:hover:text-orange-600',
+  yellow: 'text-yellow-500 pointer-hover:hover:bg-yellow-50 pointer-hover:hover:text-yellow-600',
+  green: 'text-green-500 pointer-hover:hover:bg-green-50 pointer-hover:hover:text-green-600',
+  sky: 'text-sky-500 pointer-hover:hover:bg-sky-50 pointer-hover:hover:text-sky-600',
+  violet: 'text-violet-500 pointer-hover:hover:bg-violet-50 pointer-hover:hover:text-violet-600',
+  pink: 'text-pink-500 pointer-hover:hover:bg-pink-50 pointer-hover:hover:text-pink-600',
+  white: 'text-black/40 pointer-hover:hover:bg-black/5 pointer-hover:hover:text-black/70',
+}
+
 const COLOR_GRADIENT: Record<ListColor, string> = {
   red: 'rgba(239,68,68,0.3)',
   orange: 'rgba(249,115,22,0.3)',
@@ -347,7 +358,7 @@ export function ListDetail({ listId }: Props) {
                 <div className="flex w-[calc(20px+24px+12px)] items-center">
                   <Link
                     href={`/lists/${listId}/rank/${item.id}`}
-                    className="rounded-lg px-2 py-[3px] text-black/40 pointer-hover:hover:bg-black/5 pointer-hover:hover:text-black/70"
+                    className={`rounded-lg px-2 py-[3px] ${COLOR_TEXT[(listData.color as ListColor) || 'white']}`}
                   >
                     <span className="text-base font-medium">Rank</span>
                   </Link>
