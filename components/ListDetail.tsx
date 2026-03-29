@@ -7,7 +7,7 @@ import { db } from '@/lib/firebase'
 import { useAuth } from './AuthProvider'
 import { AddItemForm } from './AddItemForm'
 import { deleteItem, setRankedItems } from '@/lib/firestore'
-import { Copy, Check, ArrowLeft, Trash2, GripVertical } from 'lucide-react'
+import { Link2, Check, ArrowLeft, Trash2, GripVertical, Plus } from 'lucide-react'
 import { ListDoc, ItemDoc } from '@/lib/types'
 
 interface ItemEntry {
@@ -27,6 +27,7 @@ export function ListDetail({ listId }: Props) {
   const [itemsLoading, setItemsLoading] = useState(true)
   const [copied, setCopied] = useState(false)
   const copyTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const [showAdd, setShowAdd] = useState(false)
   const [dragIndex, setDragIndex] = useState<number | null>(null)
   const [dragY, setDragY] = useState(0)
   const [dragging, setDragging] = useState(false)
@@ -174,20 +175,30 @@ export function ListDetail({ listId }: Props) {
   }
 
   return (
-    <main className="mx-auto min-h-dvh w-full max-w-md px-4 py-8">
+    <main className="mx-auto flex min-h-dvh w-full max-w-md flex-col px-4 py-8">
       <div className="mb-6 flex items-center gap-3">
         <Link href="/lists" className="rounded-lg p-2.5 text-stone-400 pointer-hover:hover:bg-stone-100 pointer-hover:hover:text-stone-600">
           <ArrowLeft className="h-4 w-4" />
         </Link>
-        <h1 className="flex-1 text-center text-xl font-semibold tracking-tight">{listData.title}</h1>
+        <h1 className="flex-1 text-xl font-semibold tracking-tight">{listData.title}</h1>
         <button onClick={handleCopy} className="rounded-lg p-2.5 text-stone-400 pointer-hover:hover:bg-stone-100 pointer-hover:hover:text-stone-600">
-          {copied ? <Check className="h-4 w-4 text-green-700" /> : <Copy className="h-4 w-4" />}
+          {copied ? <Check className="h-4 w-4 text-green-700" /> : <Link2 className="h-4 w-4" />}
+        </button>
+        <button
+          onClick={() => setShowAdd(true)}
+          className="rounded-lg bg-stone-200/60 p-2.5 text-stone-500 pointer-hover:hover:bg-stone-200 pointer-hover:hover:text-stone-700"
+        >
+          <Plus className="h-4 w-4" />
         </button>
       </div>
 
-      <div className="mb-8">
-        <AddItemForm listId={listId} existingNames={items.map((i) => i.data.name)} />
-      </div>
+      {showAdd && (
+        <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/40 px-4 pt-32" onClick={() => setShowAdd(false)}>
+          <div onClick={(e) => e.stopPropagation()} className="w-full max-w-sm rounded-2xl bg-white p-4 shadow-lg">
+            <AddItemForm listId={listId} existingNames={items.map((i) => i.data.name)} onAdd={() => setShowAdd(false)} autoFocus />
+          </div>
+        </div>
+      )}
 
       {rankedItems.length > 0 && (() => {
         const target = dragIndex !== null ? getOverIndex(dragIndex, dragY) : null
@@ -279,7 +290,10 @@ export function ListDetail({ listId }: Props) {
           ))}
         </div>
       ) : rankedItems.length === 0 && unrankedItems.length === 0 ? (
-        <p className="text-center text-sm text-stone-400">Add items above to get started.</p>
+        <div className="flex flex-1 max-h-64 flex-col items-center justify-center text-stone-400">
+          <p className="text-sm font-medium">No items yet</p>
+          <p className="mt-1 text-xs">Tap the + button to add your first item</p>
+        </div>
       ) : null}
     </main>
   )
