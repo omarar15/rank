@@ -103,7 +103,7 @@ export function ListsDashboard() {
               placeholder="New list name…"
               value={newTitle}
               onChange={(e) => setNewTitle(e.target.value)}
-              className="w-full rounded-xl border border-stone-200 px-4 py-2.5 text-sm outline-none focus:border-stone-400"
+              className="w-full rounded-xl border border-stone-200 px-4 py-2.5 text-base outline-none focus:border-stone-400"
               required
             />
             <div className="mt-3 flex justify-end gap-2">
