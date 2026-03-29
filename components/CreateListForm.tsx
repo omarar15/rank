@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { createList } from '@/lib/firestore'
 
 interface Props {
@@ -8,6 +9,7 @@ interface Props {
 }
 
 export function CreateListForm({ ownerId }: Props) {
+  const router = useRouter()
   const [title, setTitle] = useState('')
   const [loading, setLoading] = useState(false)
 
@@ -16,8 +18,8 @@ export function CreateListForm({ ownerId }: Props) {
     if (!title.trim()) return
     setLoading(true)
     try {
-      await createList(ownerId, title.trim())
-      setTitle('')
+      const listId = await createList(ownerId, title.trim())
+      router.push(`/lists/${listId}`)
     } finally {
       setLoading(false)
     }

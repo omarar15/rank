@@ -12,6 +12,8 @@ interface RankState {
   phase: 'loading' | 'comparing' | 'done' | 'error'
   lo: number
   hi: number
+  pivotIndex: number
+  skippedInRange: number[]
   rankedItems: string[]
   itemNames: Record<string, string>
   itemBeingRankedName: string
@@ -21,36 +23,49 @@ type RankAction =
   | { type: 'INIT'; rankedItems: string[]; itemNames: Record<string, string>; itemBeingRankedName: string }
   | { type: 'CHOOSE_BETTER' }
   | { type: 'CHOOSE_WORSE' }
+  | { type: 'SKIP' }
   | { type: 'ERROR' }
+
+function nextSkipPivot(lo: number, hi: number, current: number, skipped: number[]): { pivotIndex: number; skippedInRange: number[] } {
+  const skippedInRange = [...skipped, current]
+  const available = Array.from({ length: hi - lo }, (_, i) => lo + i).filter(
+    (i) => !skippedInRange.includes(i),
+  )
+  if (available.length > 0) {
+    const pivotIndex = available[Math.floor(Math.random() * available.length)]
+    return { pivotIndex, skippedInRange }
+  }
+  // All exhausted — fall back to mid
+  return { pivotIndex: Math.floor((lo + hi) / 2), skippedInRange }
+}
 
 function reducer(state: RankState, action: RankAction): RankState {
   switch (action.type) {
     case 'INIT': {
       const { rankedItems, itemNames, itemBeingRankedName } = action
       if (rankedItems.length === 0) {
-        return { ...state, phase: 'done', rankedItems, itemNames, itemBeingRankedName, lo: 0, hi: 0 }
+        return { ...state, phase: 'done', rankedItems, itemNames, itemBeingRankedName, lo: 0, hi: 0, pivotIndex: 0, skippedInRange: [] }
       }
-      return {
-        ...state,
-        phase: 'comparing',
-        lo: 0,
-        hi: rankedItems.length,
-        rankedItems,
-        itemNames,
-        itemBeingRankedName,
-      }
+      const lo = 0
+      const hi = rankedItems.length
+      const pivotIndex = Math.floor((lo + hi) / 2)
+      return { ...state, phase: 'comparing', lo, hi, pivotIndex, skippedInRange: [], rankedItems, itemNames, itemBeingRankedName }
     }
     case 'CHOOSE_BETTER': {
-      const mid = Math.floor((state.lo + state.hi) / 2)
-      const hi = mid
+      const hi = state.pivotIndex
       if (state.lo === hi) return { ...state, phase: 'done', hi }
-      return { ...state, hi }
+      const pivotIndex = Math.floor((state.lo + hi) / 2)
+      return { ...state, hi, pivotIndex, skippedInRange: [] }
     }
     case 'CHOOSE_WORSE': {
-      const mid = Math.floor((state.lo + state.hi) / 2)
-      const lo = mid + 1
+      const lo = state.pivotIndex + 1
       if (lo === state.hi) return { ...state, phase: 'done', lo }
-      return { ...state, lo }
+      const pivotIndex = Math.floor((lo + state.hi) / 2)
+      return { ...state, lo, pivotIndex, skippedInRange: [] }
+    }
+    case 'SKIP': {
+      const { pivotIndex, skippedInRange } = nextSkipPivot(state.lo, state.hi, state.pivotIndex, state.skippedInRange)
+      return { ...state, pivotIndex, skippedInRange }
     }
     case 'ERROR':
       return { ...state, phase: 'error' }
@@ -63,6 +78,8 @@ const initialState: RankState = {
   phase: 'loading',
   lo: 0,
   hi: 0,
+  pivotIndex: 0,
+  skippedInRange: [],
   rankedItems: [],
   itemNames: {},
   itemBeingRankedName: '',
@@ -106,15 +123,9 @@ export function RankingFlow({ listId, itemId }: Props) {
           itemNames[d.id] = (d.data() as ItemDoc).name
         })
 
-        // Exclude the item being ranked from the snapshot (handles re-ranking)
         const rankedItems = listData.rankedItems.filter((id) => id !== itemId)
 
-        dispatch({
-          type: 'INIT',
-          rankedItems,
-          itemNames,
-          itemBeingRankedName: itemData.name,
-        })
+        dispatch({ type: 'INIT', rankedItems, itemNames, itemBeingRankedName: itemData.name })
       } catch {
         dispatch({ type: 'ERROR' })
       }
@@ -123,7 +134,6 @@ export function RankingFlow({ listId, itemId }: Props) {
     init()
   }, [listId, itemId, user])
 
-  // When phase transitions to 'done', write to Firestore and navigate back
   useEffect(() => {
     if (state.phase !== 'done') return
 
@@ -142,55 +152,49 @@ export function RankingFlow({ listId, itemId }: Props) {
   }
 
   if (state.phase === 'error') {
-    return (
-      <div className="flex min-h-dvh items-center justify-center text-zinc-400">
-        Something went wrong.
-      </div>
-    )
+    return <div className="flex min-h-dvh items-center justify-center text-zinc-400">Something went wrong.</div>
   }
 
   if (state.phase === 'done') {
     return <div className="flex min-h-dvh items-center justify-center text-zinc-400">Saving…</div>
   }
 
-  const { lo, hi, rankedItems, itemNames, itemBeingRankedName } = state
-  const mid = Math.floor((lo + hi) / 2)
-  const pivotName = itemNames[rankedItems[mid]] ?? rankedItems[mid]
+  const { lo, hi, pivotIndex, rankedItems, itemNames, itemBeingRankedName } = state
+  const pivotName = itemNames[rankedItems[pivotIndex]] ?? rankedItems[pivotIndex]
   const totalComparisons = Math.ceil(Math.log2(rankedItems.length + 1))
   const done = totalComparisons - Math.ceil(Math.log2(hi - lo + 1))
 
   return (
     <main className="flex min-h-dvh flex-col items-center justify-center px-6">
       <div className="w-full max-w-sm">
-        <p className="mb-2 text-center text-xs text-zinc-400">
-          Comparison {done + 1} of ~{totalComparisons}
+        <p className="mb-6 text-center text-xs text-zinc-400">
+          Which do you prefer? ({done + 1} of ~{totalComparisons})
         </p>
 
-        <div className="mb-8 rounded-2xl border border-zinc-100 bg-white px-5 py-4 text-center shadow-sm">
-          <p className="text-xs font-semibold uppercase tracking-wider text-zinc-400">Ranking</p>
-          <p className="mt-1 text-lg font-semibold">{itemBeingRankedName}</p>
-        </div>
-
-        <p className="mb-4 text-center text-sm text-zinc-500">compared to</p>
-
-        <div className="mb-8 rounded-2xl border border-zinc-200 bg-zinc-50 px-5 py-4 text-center">
-          <p className="text-lg font-semibold">{pivotName}</p>
-        </div>
-
-        <div className="flex flex-col gap-3">
+        <div className="flex gap-3">
           <button
             onClick={() => dispatch({ type: 'CHOOSE_BETTER' })}
-            className="w-full rounded-2xl bg-zinc-900 px-4 py-4 text-base font-semibold text-white active:bg-zinc-700"
+            className="flex flex-1 flex-col items-center justify-center rounded-2xl border-2 border-zinc-200 bg-white px-4 py-8 text-center font-semibold text-zinc-900 active:bg-zinc-50"
           >
-            Better ↑
+            {itemBeingRankedName}
           </button>
+
+          <div className="flex items-center text-sm font-medium text-zinc-400">vs</div>
+
           <button
             onClick={() => dispatch({ type: 'CHOOSE_WORSE' })}
-            className="w-full rounded-2xl border border-zinc-200 px-4 py-4 text-base font-semibold text-zinc-700 active:bg-zinc-50"
+            className="flex flex-1 flex-col items-center justify-center rounded-2xl border-2 border-zinc-200 bg-white px-4 py-8 text-center font-semibold text-zinc-900 active:bg-zinc-50"
           >
-            Worse ↓
+            {pivotName}
           </button>
         </div>
+
+        <button
+          onClick={() => dispatch({ type: 'SKIP' })}
+          className="mt-4 w-full py-2 text-sm text-zinc-400 underline"
+        >
+          Can't decide
+        </button>
       </div>
     </main>
   )
