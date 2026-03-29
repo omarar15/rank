@@ -11,7 +11,18 @@ export function PhoneAuthForm() {
   const { user, loading } = useAuth()
   const router = useRouter()
 
-  const [phone, setPhone] = useState('')
+  const [phone, setPhone] = useState('')  // raw digits only
+
+  function formatPhone(digits: string): string {
+    if (digits.length <= 3) return digits
+    if (digits.length <= 6) return `(${digits.slice(0, 3)}) ${digits.slice(3)}`
+    return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6, 10)}`
+  }
+
+  function handlePhoneChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const digits = e.target.value.replace(/\D/g, '').slice(0, 10)
+    setPhone(digits)
+  }
   const [confirmation, setConfirmation] = useState<ConfirmationResult | null>(null)
   const [error, setError] = useState('')
   const [sending, setSending] = useState(false)
@@ -67,9 +78,9 @@ export function PhoneAuthForm() {
           <span className="mr-1 text-stone-400">+1</span>
           <input
             type="tel"
-            placeholder="555 555 5555"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
+            placeholder="(555) 555-5555"
+            value={formatPhone(phone)}
+            onChange={handlePhoneChange}
             className="flex-1 outline-none placeholder:text-stone-300"
             autoFocus
             required
