@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { collection, query, where, orderBy, onSnapshot } from 'firebase/firestore'
+import { collection, query, where, orderBy, onSnapshot, getDocs } from 'firebase/firestore'
 import { signOut } from 'firebase/auth'
 import { db, auth } from '@/lib/firebase'
 import { useAuth } from './AuthProvider'
@@ -32,12 +32,11 @@ function ListCard({ id, data }: ListEntry) {
   const [itemNames, setItemNames] = useState<Map<string, string>>(new Map())
 
   useEffect(() => {
-    const unsub = onSnapshot(collection(db, 'lists', id, 'items'), (snap) => {
+    getDocs(collection(db, 'lists', id, 'items')).then((snap) => {
       const map = new Map<string, string>()
       snap.docs.forEach((d) => map.set(d.id, (d.data() as ItemDoc).name))
       setItemNames(map)
     })
-    return unsub
   }, [id])
 
   const rankedNames = data.rankedItems
