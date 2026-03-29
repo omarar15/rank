@@ -432,8 +432,8 @@ export function ListDetail({ listId }: Props) {
                     >
                       <GripVertical className="h-4 w-4" />
                     </span>
-                    <span className="w-6 text-right text-base font-medium text-stone-400">{i + 1}</span>
-                    <span className="flex-1 min-w-0">
+                    <span className="w-6 pt-[3px] text-right text-base font-medium text-stone-400">{i + 1}</span>
+                    <span className="flex-1 min-w-0 pt-[3px]">
                       <span className="block text-base font-medium">{item.data.name}</span>
                       {item.data.description && (
                         <span className="block text-xs text-stone-400 mt-0.5 whitespace-pre-wrap break-words">{item.data.description}</span>
@@ -496,7 +496,7 @@ export function ListDetail({ listId }: Props) {
                     </Link>
                   )}
                 </div>
-                <span className="flex-1 min-w-0">
+                <span className="flex-1 min-w-0 pt-[3px]">
                   <span className="block text-base font-medium">{item.data.name}</span>
                   {item.data.description && (
                     <span className="block text-xs text-stone-400 mt-0.5 truncate">{item.data.description}</span>
