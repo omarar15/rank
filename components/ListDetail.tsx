@@ -222,7 +222,7 @@ export function ListDetail({ listId }: Props) {
       <main className="mx-auto min-h-dvh w-full max-w-md px-4 py-8">
         <div className="mb-8 flex items-center gap-3">
           <h1 className="flex-1 text-xl font-semibold tracking-tight">{listData.title}</h1>
-          <Link href="/" className="text-sm text-stone-400 underline">Sign in</Link>
+          <Link href="/" onClick={() => trigger('light')} className="text-sm text-stone-400 underline">Sign in</Link>
         </div>
 
         {itemsLoading ? (
@@ -250,7 +250,7 @@ export function ListDetail({ listId }: Props) {
   return (
     <main className="mx-auto flex min-h-dvh w-full max-w-md flex-col px-4 py-8">
       <div className="mb-6 flex items-center gap-2">
-        <Link href="/lists" className="rounded-lg p-2.5 text-black/40 pointer-hover:hover:bg-black/5 pointer-hover:hover:text-black/70">
+        <Link href="/lists" onClick={() => trigger('light')} className="rounded-lg p-2.5 text-black/40 pointer-hover:hover:bg-black/5 pointer-hover:hover:text-black/70">
           <ArrowLeft className="h-4 w-4" />
         </Link>
         <h1 className="flex-1 text-xl font-semibold tracking-tight">{listData.title}</h1>
@@ -499,6 +499,7 @@ export function ListDetail({ listId }: Props) {
                   ) : (
                     <Link
                       href={`/lists/${listId}/rank/${item.id}`}
+                      onClick={() => trigger('light')}
                       className={`rounded-lg px-2 py-[3px] ${COLOR_TEXT[(listData.color as ListColor) || 'white']}`}
                     >
                       <span className="text-base font-medium">Rank</span>

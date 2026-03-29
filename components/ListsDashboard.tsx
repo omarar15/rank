@@ -30,6 +30,7 @@ interface ListEntry {
 }
 
 function ListCard({ id, data }: ListEntry) {
+  const { trigger } = useWebHaptics()
   const [itemNames, setItemNames] = useState<Map<string, string>>(new Map())
 
   useEffect(() => {
@@ -48,6 +49,7 @@ function ListCard({ id, data }: ListEntry) {
   return (
     <Link
       href={`/lists/${id}`}
+      onClick={() => trigger('light')}
       className="flex overflow-hidden rounded-2xl bg-white p-4 shadow-md active:bg-stone-50 ring ring-black/5"
       style={{ backgroundImage: `linear-gradient(to bottom right, ${COLOR_GRADIENT[(data.color as ListColor) || 'white']}, white 70%)` }}
     >
