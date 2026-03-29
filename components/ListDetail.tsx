@@ -314,7 +314,7 @@ export function ListDetail({ listId }: Props) {
       {showAdd && (
         <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/40 px-4 pt-32" onClick={() => setShowAdd(false)}>
           <div onClick={(e) => e.stopPropagation()} className="w-full max-w-sm rounded-2xl bg-white p-4 shadow-lg">
-            <AddItemForm listId={listId} existingNames={items.map((i) => i.data.name)} color={(listData.color as ListColor) || 'white'} onAdd={() => setShowAdd(false)} autoFocus />
+            <AddItemForm listId={listId} existingNames={items.map((i) => i.data.name)} currentRankedIds={rankedIds} color={(listData.color as ListColor) || 'white'} onAdd={() => setShowAdd(false)} autoFocus />
           </div>
         </div>
       )}

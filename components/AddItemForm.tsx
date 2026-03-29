@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { addItem } from '@/lib/firestore'
+import { addItem, setRankedItems } from '@/lib/firestore'
 import { ListColor } from '@/lib/types'
 
 const COLOR_PRIMARY_BTN: Record<ListColor, string> = {
@@ -19,12 +19,13 @@ const COLOR_PRIMARY_BTN: Record<ListColor, string> = {
 interface Props {
   listId: string
   existingNames: string[]
+  currentRankedIds: string[]
   color?: ListColor
   onAdd?: () => void
   autoFocus?: boolean
 }
 
-export function AddItemForm({ listId, existingNames, color = 'white', onAdd, autoFocus }: Props) {
+export function AddItemForm({ listId, existingNames, currentRankedIds, color = 'white', onAdd, autoFocus }: Props) {
   const router = useRouter()
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')
@@ -38,7 +39,13 @@ export function AddItemForm({ listId, existingNames, color = 'white', onAdd, aut
     setName('')
     setDescription('')
     onAdd?.()
-    if (rank) router.push(`/lists/${listId}/rank/${itemId}`)
+    if (rank) {
+      if (currentRankedIds.length === 0) {
+        setRankedItems(listId, [itemId])
+      } else {
+        router.push(`/lists/${listId}/rank/${itemId}`)
+      }
+    }
   }
 
   const empty = !trimmed
