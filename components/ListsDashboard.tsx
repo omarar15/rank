@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { collection, query, where, orderBy, onSnapshot } from 'firebase/firestore'
@@ -75,7 +75,6 @@ export function ListsDashboard() {
   const [showCreate, setShowCreate] = useState(false)
   const [newTitle, setNewTitle] = useState('')
   const [newColor, setNewColor] = useState<ListColor>('white')
-  const inputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     if (!loading && !user) {
@@ -125,10 +124,7 @@ export function ListsDashboard() {
         </button>
         <h1 className="flex-1 text-center text-xl font-semibold tracking-tight">My Lists</h1>
         <button
-          onClick={() => {
-            setShowCreate(true)
-            setTimeout(() => inputRef.current?.focus(), 0)
-          }}
+          onClick={() => setShowCreate(true)}
           className="fixed bottom-6 right-4 z-40 rounded-full bg-stone-800 p-4 text-white shadow-lg sm:static sm:p-2.5 sm:shadow-none"
         >
           <Plus className="h-6 w-6 sm:h-4 sm:w-4" />
@@ -154,7 +150,7 @@ export function ListsDashboard() {
             <label className="flex flex-col gap-1.5">
               <span className="text-xs font-medium text-stone-400">Name</span>
               <input
-                ref={inputRef}
+                autoFocus
                 type="text"
                 placeholder="List name"
                 value={newTitle}
