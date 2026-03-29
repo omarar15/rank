@@ -136,15 +136,10 @@ export function RankingFlow({ listId, itemId }: Props) {
 
   useEffect(() => {
     if (state.phase !== 'done') return
-
-    async function commit() {
-      const { rankedItems, lo } = state
-      const newRankedItems = [...rankedItems.slice(0, lo), itemId, ...rankedItems.slice(lo)]
-      await setRankedItems(listId, newRankedItems)
-      router.push(`/lists/${listId}`)
-    }
-
-    commit()
+    const { rankedItems, lo } = state
+    const newRankedItems = [...rankedItems.slice(0, lo), itemId, ...rankedItems.slice(lo)]
+    setRankedItems(listId, newRankedItems)
+    router.push(`/lists/${listId}`)
   }, [state.phase]) // eslint-disable-line react-hooks/exhaustive-deps
 
   if (loading || state.phase === 'loading') {
@@ -155,11 +150,7 @@ export function RankingFlow({ listId, itemId }: Props) {
     return <div className="flex min-h-dvh items-center justify-center text-zinc-400">Something went wrong.</div>
   }
 
-  if (state.phase === 'done') {
-    return <div className="flex min-h-dvh items-center justify-center text-zinc-400">Saving…</div>
-  }
-
-  const { lo, hi, pivotIndex, rankedItems, itemNames, itemBeingRankedName } = state
+const { lo, hi, pivotIndex, rankedItems, itemNames, itemBeingRankedName } = state
   const pivotName = itemNames[rankedItems[pivotIndex]] ?? rankedItems[pivotIndex]
   const totalComparisons = Math.ceil(Math.log2(rankedItems.length + 1))
   const done = totalComparisons - Math.ceil(Math.log2(hi - lo + 1))

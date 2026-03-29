@@ -11,18 +11,12 @@ interface Props {
 export function CreateListForm({ ownerId }: Props) {
   const router = useRouter()
   const [title, setTitle] = useState('')
-  const [loading, setLoading] = useState(false)
 
-  async function handleSubmit(e: React.FormEvent) {
+  function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (!title.trim()) return
-    setLoading(true)
-    try {
-      const listId = await createList(ownerId, title.trim())
-      router.push(`/lists/${listId}`)
-    } finally {
-      setLoading(false)
-    }
+    const listId = createList(ownerId, title.trim())
+    router.push(`/lists/${listId}`)
   }
 
   return (
@@ -37,7 +31,7 @@ export function CreateListForm({ ownerId }: Props) {
       />
       <button
         type="submit"
-        disabled={loading || !title.trim()}
+        disabled={!title.trim()}
         className="rounded-xl bg-zinc-900 px-4 py-2.5 text-sm font-medium text-white disabled:opacity-40"
       >
         Create

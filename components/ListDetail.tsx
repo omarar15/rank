@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { doc, collection, onSnapshot } from 'firebase/firestore'
@@ -25,6 +25,9 @@ export function ListDetail({ listId }: Props) {
   const [listData, setListData] = useState<ListDoc | null>(null)
   const [items, setItems] = useState<ItemEntry[]>([])
   const [listLoading, setListLoading] = useState(true)
+  const [itemsLoading, setItemsLoading] = useState(true)
+  const [copied, setCopied] = useState(false)
+  const copyTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   useEffect(() => {
     if (!loading && !user) router.push('/auth')
@@ -43,6 +46,7 @@ export function ListDetail({ listId }: Props) {
     if (!user) return
     const unsub = onSnapshot(collection(db, 'lists', listId, 'items'), (snap) => {
       setItems(snap.docs.map((d) => ({ id: d.id, data: d.data() as ItemDoc })))
+      setItemsLoading(false)
     })
     return unsub
   }, [listId, user])
@@ -65,8 +69,8 @@ export function ListDetail({ listId }: Props) {
     ? `${window.location.origin}/share/${listData.shareToken}`
     : ''
 
-  async function handleDelete(itemId: string) {
-    await deleteItem(listId, itemId)
+  function handleDelete(itemId: string) {
+    deleteItem(listId, itemId)
   }
 
   return (
@@ -75,15 +79,20 @@ export function ListDetail({ listId }: Props) {
         <Link href="/lists" className="text-sm text-zinc-400">← Lists</Link>
         <h1 className="flex-1 text-xl font-semibold tracking-tight">{listData.title}</h1>
         <button
-          onClick={() => navigator.clipboard.writeText(shareUrl)}
+          onClick={() => {
+            navigator.clipboard.writeText(shareUrl)
+            setCopied(true)
+            if (copyTimeoutRef.current) clearTimeout(copyTimeoutRef.current)
+            copyTimeoutRef.current = setTimeout(() => setCopied(false), 2000)
+          }}
           className="text-sm text-zinc-400 underline"
         >
-          Share
+          {copied ? 'Copied!' : 'Share'}
         </button>
       </div>
 
       <div className="mb-8">
-        <AddItemForm listId={listId} />
+        <AddItemForm listId={listId} existingNames={items.map((i) => i.data.name)} />
       </div>
 
       {rankedItems.length > 0 && (
@@ -137,9 +146,11 @@ export function ListDetail({ listId }: Props) {
         </section>
       )}
 
-      {rankedItems.length === 0 && unrankedItems.length === 0 && (
+      {itemsLoading ? (
+        <p className="text-center text-sm text-zinc-400">Loading…</p>
+      ) : rankedItems.length === 0 && unrankedItems.length === 0 ? (
         <p className="text-center text-sm text-zinc-400">Add items above to get started.</p>
-      )}
+      ) : null}
     </main>
   )
 }

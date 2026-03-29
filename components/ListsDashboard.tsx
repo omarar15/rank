@@ -19,6 +19,7 @@ export function ListsDashboard() {
   const { user, loading } = useAuth()
   const router = useRouter()
   const [lists, setLists] = useState<ListEntry[]>([])
+  const [listsLoading, setListsLoading] = useState(true)
 
   useEffect(() => {
     if (!loading && !user) {
@@ -35,6 +36,7 @@ export function ListsDashboard() {
     )
     const unsub = onSnapshot(q, (snap) => {
       setLists(snap.docs.map((d) => ({ id: d.id, data: d.data() as ListDoc })))
+      setListsLoading(false)
     })
     return unsub
   }, [user])
@@ -59,7 +61,9 @@ export function ListsDashboard() {
         <CreateListForm ownerId={user.uid} />
       </div>
 
-      {lists.length === 0 ? (
+      {listsLoading ? (
+        <p className="text-center text-sm text-zinc-400">Loading…</p>
+      ) : lists.length === 0 ? (
         <p className="text-center text-sm text-zinc-400">No lists yet. Create one above.</p>
       ) : (
         <ul className="flex flex-col gap-3">

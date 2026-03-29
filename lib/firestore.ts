@@ -1,7 +1,6 @@
 import {
   collection,
   doc,
-  addDoc,
   deleteDoc,
   updateDoc,
   setDoc,
@@ -17,8 +16,9 @@ export async function createUserDoc(uid: string, phone: string) {
   await setDoc(doc(db, 'users', uid), { phone, createdAt: serverTimestamp() }, { merge: true })
 }
 
-export async function createList(ownerId: string, title: string): Promise<string> {
-  const ref = await addDoc(collection(db, 'lists'), {
+export function createList(ownerId: string, title: string): string {
+  const ref = doc(collection(db, 'lists'))
+  setDoc(ref, {
     ownerId,
     title,
     shareToken: generateToken(),
@@ -29,11 +29,9 @@ export async function createList(ownerId: string, title: string): Promise<string
   return ref.id
 }
 
-export async function addItem(listId: string, name: string): Promise<string> {
-  const ref = await addDoc(collection(db, 'lists', listId, 'items'), {
-    name,
-    createdAt: serverTimestamp(),
-  })
+export function addItem(listId: string, name: string): string {
+  const ref = doc(collection(db, 'lists', listId, 'items'))
+  setDoc(ref, { name, createdAt: serverTimestamp() })
   return ref.id
 }
 
