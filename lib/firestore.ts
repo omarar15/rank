@@ -37,9 +37,11 @@ export async function updateListColor(listId: string, color: string) {
   })
 }
 
-export function addItem(listId: string, name: string): string {
+export function addItem(listId: string, name: string, description?: string): string {
   const ref = doc(collection(db, 'lists', listId, 'items'))
-  setDoc(ref, { name, createdAt: serverTimestamp() })
+  const data: Record<string, unknown> = { name, createdAt: serverTimestamp() }
+  if (description) data.description = description
+  setDoc(ref, data)
   return ref.id
 }
 

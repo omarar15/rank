@@ -27,14 +27,16 @@ interface Props {
 export function AddItemForm({ listId, existingNames, color = 'white', onAdd, autoFocus }: Props) {
   const router = useRouter()
   const [name, setName] = useState('')
+  const [description, setDescription] = useState('')
 
   const trimmed = name.trim()
   const isDuplicate = existingNames.some((n) => n.toLowerCase() === trimmed.toLowerCase())
 
   function handleAdd(rank: boolean) {
     if (!trimmed || isDuplicate) return
-    const itemId = addItem(listId, trimmed)
+    const itemId = addItem(listId, trimmed, description.trim() || undefined)
     setName('')
+    setDescription('')
     onAdd?.()
     if (rank) router.push(`/lists/${listId}/rank/${itemId}`)
   }
@@ -51,6 +53,13 @@ export function AddItemForm({ listId, existingNames, color = 'white', onAdd, aut
         onKeyDown={(e) => e.key === 'Enter' && handleAdd(true)}
         autoFocus={autoFocus}
         className="w-full rounded-xl border border-stone-200 px-4 py-2.5 text-base outline-none focus:border-stone-400"
+      />
+      <textarea
+        placeholder="Description (optional)"
+        value={description}
+        onChange={(e) => setDescription(e.target.value)}
+        rows={2}
+        className="w-full resize-none rounded-xl border border-stone-200 px-4 py-2.5 text-sm text-stone-600 outline-none focus:border-stone-400"
       />
       {isDuplicate && (
         <p className="text-xs text-red-400">Already in this list.</p>

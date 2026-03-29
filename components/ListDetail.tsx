@@ -334,7 +334,12 @@ export function ListDetail({ listId }: Props) {
                       <GripVertical className="h-4 w-4" />
                     </span>
                     <span className="w-6 text-right text-base font-medium text-stone-400">{i + 1}</span>
-                    <span className="flex-1 text-base font-medium">{item.data.name}</span>
+                    <span className="flex-1 min-w-0">
+                      <span className="block text-base font-medium">{item.data.name}</span>
+                      {item.data.description && (
+                        <span className="block text-xs text-stone-400 mt-0.5 truncate">{item.data.description}</span>
+                      )}
+                    </span>
                     <button
                       onClick={() => handleDelete(item.id)}
                       className="rounded-lg p-2 text-stone-400 pointer-hover:hover:bg-red-50 pointer-hover:hover:text-red-500"
@@ -363,7 +368,12 @@ export function ListDetail({ listId }: Props) {
                     <span className="text-base font-medium">Rank</span>
                   </Link>
                 </div>
-                <span className="flex-1 text-base font-medium">{item.data.name}</span>
+                <span className="flex-1 min-w-0">
+                  <span className="block text-base font-medium">{item.data.name}</span>
+                  {item.data.description && (
+                    <span className="block text-xs text-stone-400 mt-0.5 truncate">{item.data.description}</span>
+                  )}
+                </span>
                 <button
                   onClick={() => handleDelete(item.id)}
                   className="rounded-lg p-2 text-stone-400 pointer-hover:hover:bg-red-50 pointer-hover:hover:text-red-500"
