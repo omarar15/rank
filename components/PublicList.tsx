@@ -25,9 +25,10 @@ export function PublicList({ shareToken }: Props) {
     let unsubItems: (() => void) | null = null
     let currentListData: ListDoc | null = null
     let currentNameMap: Record<string, string> = {}
+    let itemsReady = false
 
     function resolve() {
-      if (!currentListData) return
+      if (!currentListData || !itemsReady) return
       const resolved = currentListData.rankedItems
         .map((id) => ({ id, name: currentNameMap[id] ?? id }))
         .filter((i) => i.name)
@@ -67,6 +68,7 @@ export function PublicList({ shareToken }: Props) {
           nameMap[d.id] = (d.data() as ItemDoc).name
         })
         currentNameMap = nameMap
+        itemsReady = true
         resolve()
       })
     }
