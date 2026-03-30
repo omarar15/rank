@@ -33,6 +33,7 @@ export function AddItemForm({ listId, existingNames }: Props) {
         value={name}
         onChange={(e) => setName(e.target.value)}
         onKeyDown={(e) => e.key === 'Enter' && handleAdd(true)}
+        autoComplete="off"
         className="w-full rounded-xl border border-zinc-200 px-4 py-2.5 text-sm outline-none focus:border-zinc-400"
       />
       {isDuplicate && (

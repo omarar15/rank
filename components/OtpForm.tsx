@@ -43,6 +43,7 @@ export function OtpForm({ phone, confirmation, onBack }: Props) {
         value={otp}
         onChange={(e) => setOtp(e.target.value)}
         className="w-full rounded-xl border border-zinc-200 px-4 py-3 text-center text-2xl tracking-widest outline-none focus:border-zinc-400"
+        autoComplete="one-time-code"
         autoFocus
         required
       />

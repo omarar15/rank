@@ -26,6 +26,7 @@ export function CreateListForm({ ownerId }: Props) {
         placeholder="New list name…"
         value={title}
         onChange={(e) => setTitle(e.target.value)}
+        autoComplete="off"
         className="flex-1 rounded-xl border border-zinc-200 px-4 py-2.5 text-sm outline-none focus:border-zinc-400"
         required
       />
