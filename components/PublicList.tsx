@@ -9,7 +9,7 @@ export function PublicList({ data }: Props) {
   if (!data) {
     return (
       <div className="flex min-h-dvh items-center justify-center text-stone-400">
-        <Link href="/auth" className="absolute top-4 right-4 text-sm font-medium text-stone-500 hover:text-stone-800">
+        <Link href="/" className="absolute top-4 right-4 text-sm font-medium text-stone-500 hover:text-stone-800">
           Sign up / Log in
         </Link>
         List not found.
@@ -19,7 +19,7 @@ export function PublicList({ data }: Props) {
 
   return (
     <main className="mx-auto min-h-dvh w-full max-w-md px-4 py-8">
-      <Link href="/auth" className="absolute top-4 right-4 text-sm font-medium text-stone-500 hover:text-stone-800">
+      <Link href="/" className="absolute top-4 right-4 text-sm font-medium text-stone-500 hover:text-stone-800">
         Sign up / Log in
       </Link>
       <h1 className="mb-8 text-xl font-semibold tracking-tight">{data.title}</h1>
