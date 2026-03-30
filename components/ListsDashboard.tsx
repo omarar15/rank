@@ -168,6 +168,7 @@ export function ListsDashboard() {
                 placeholder="List name"
                 value={newTitle}
                 onChange={(e) => setNewTitle(e.target.value)}
+                autoComplete="off"
                 className="w-full rounded-xl border border-stone-200 px-4 py-2.5 text-base outline-none focus:border-stone-400"
                 required
               />
