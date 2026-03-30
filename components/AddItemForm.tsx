@@ -61,6 +61,7 @@ export function AddItemForm({ listId, existingNames, currentRankedIds, color = '
         onChange={(e) => setName(e.target.value)}
         onKeyDown={(e) => e.key === 'Enter' && handleAdd(true)}
         autoFocus={autoFocus}
+        autoComplete="off"
         className="w-full rounded-xl border border-stone-200 px-4 py-2.5 text-base outline-none focus:border-stone-400"
       />
       <textarea
@@ -68,6 +69,7 @@ export function AddItemForm({ listId, existingNames, currentRankedIds, color = '
         value={description}
         onChange={(e) => setDescription(e.target.value)}
         rows={2}
+        autoComplete="off"
         className="w-full resize-none rounded-xl border border-stone-200 px-4 py-2.5 text-base text-stone-600 outline-none focus:border-stone-400"
       />
       {isDuplicate && (

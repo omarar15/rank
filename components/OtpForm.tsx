@@ -70,6 +70,7 @@ export function OtpForm({ phone, confirmation, onBack }: Props) {
         onChange={handleOtpChange}
         className="w-full rounded-xl border border-stone-200 py-3 text-2xl tracking-widest outline-none focus:border-stone-400"
         style={{ fontVariantNumeric: 'tabular-nums', paddingLeft: 'calc((100% - 7ch - 7 * 0.1em) / 2)', paddingRight: 'calc((100% - 7ch - 7 * 0.1em) / 2)' }}
+        autoComplete="one-time-code"
         autoFocus
         required
       />
